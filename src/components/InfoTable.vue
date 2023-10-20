@@ -24,7 +24,7 @@
                         {{ data[head.prop]}}
                     </div>
                     <div v-else-if="head.prop === 'cz'" class="file-name" style="text-align: center">
-                        <button @click="copyUrl(index)">复制链接</button>
+                        <button @click="copyUrl(index)">分享</button>
                     </div>
                     <div v-else class="file-name">{{ data[head.prop] }}</div>
                 </td>

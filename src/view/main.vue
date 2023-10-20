@@ -1,18 +1,36 @@
 <template>
     <div>
+        <div class="imgBox" v-if="imgShow">
+          <div class="img">
+            <div class="close-btn" @click="headImg">
+              <close theme="outline" size="20" fill="#ffffff" :strokeWidth="5"/>
+            </div>
+            <div class="left-btn" @click="preImg">
+              <arrow-circle-left theme="outline" size="30" fill="#ffffff" :strokeWidth="5"/>
+            </div>
+            <div class="right-btn" @click="nextImg">
+              <arrow-circle-right theme="outline" size="30" fill="#ffffff" :strokeWidth="5"/>
+            </div>
+            <img :src="nowImageSrc"  alt="">
+          </div>
+          <div class="blackScreen" @click="headImg"></div>
+        </div>
         <InfoTable :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @copy-url="copyUrl"></InfoTable>
         <div class="ret" @click="returnPath">返回</div>
     </div>
 </template>
 <script setup>
 import InfoTable from "@/components/InfoTable.vue";
-import {onActivated, onMounted, onUnmounted, ref} from "vue";
+import {Close,ArrowCircleLeft,ArrowCircleRight} from "@icon-park/vue-next";
+import {onMounted, onUnmounted, ref} from "vue";
 import axios from "axios";
-import { api as viewerApi } from "v-viewer"
 import {useRoute, useRouter} from "vue-router";
+
+
+
 const router = useRouter()
 const route = useRoute()
-const local = `${window.location.protocol}//${window.location.hostname}:3000`
+const local = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`
 const path = ref("$")
 const tableData = ref([])
 const tableHeader = ref([
@@ -45,11 +63,34 @@ const returnPath = () => {
 
 const imgUrls = ref([
 ])
+
+const nowImageSrc = ref("");
+const nowImgIndex = ref(0);
+const imgShow = ref(false);
+//下一张图片
+const nextImg = () => {
+  nowImgIndex.value++
+  nowImgIndex.value = nowImgIndex.value % imgUrls.value.length
+  nowImageSrc.value = imgUrls.value[nowImgIndex.value]
+  console.log(nowImgIndex.value)
+}
+//上一张图片
+const preImg = () => {
+  nowImgIndex.value--;
+  if(nowImgIndex.value<0){
+    nowImgIndex.value = imgUrls.value.length -1
+  }
+  nowImgIndex.value = nowImgIndex.value % imgUrls.value.length
+  nowImageSrc.value = imgUrls.value[nowImgIndex.value]
+}
 //查看图片
 const showImg = ()=>{
-    viewerApi({
-        images: imgUrls.value
-    })
+  imgShow.value = true;
+  nowImageSrc.value = imgUrls.value[nowImgIndex.value];
+  console.log(imgUrls.value)
+}
+const headImg = ()=>{
+  imgShow.value = false;
 }
 
 const getFileUrl = (filePath,fileName)=>{
@@ -59,13 +100,20 @@ const getFileUrl = (filePath,fileName)=>{
         filePath = filePath.replace(/\$/g, "")
     }
     filePath = filePath.replace(/__/g, "/")
-    console.log(`${local}/getFile${filePath}/${fileName}`)
+    console.log(`获取文件：${local}/getFile${filePath}/${fileName}`)
     return `${local}/getFile${filePath}/${fileName}`;
 }
 
 const copyUrl = (index)=>{
-    let fileInfo = tableData.value[index];
+  let fileInfo = tableData.value[index];
+  try {
+    navigator.share({
+      title: fileInfo.name,
+      url: getFileUrl(path.value, fileInfo.name),
+    });
+  }catch (e){
     alert(getFileUrl(path.value, fileInfo.name))
+  }
 }
 
 const VIDEO = [".MP4", ".AVI", ".MOV", ".FLV",".MKV"];
@@ -96,13 +144,19 @@ const clickFile = (index) => {
         } else if (IMG.includes(fileSuffix.toUpperCase())) {
             //图片
             imgUrls.value = [];
-            for(let i = index;i<tableData.value.length && i< i+10;i++){
+            let num = 0;
+            for(let i = 0;i<tableData.value.length;i++){
                 let fileSuffix2 = tableData.value[i].suffix;
-                //获取后面10张图片
                 if(IMG.includes(fileSuffix2.toUpperCase())){
-                    imgUrls.value.push(getFileUrl(path.value, tableData.value[i].name))
+                  if(tableData.value[i].name === tableData.value[index].name){
+                    nowImgIndex.value = num;
+                    console.log(nowImgIndex.value,123456789)
+                  }
+                  num++;
+                  imgUrls.value.push(getFileUrl(path.value, tableData.value[i].name))
                 }
             }
+
             showImg()
         } else if(AUDIO.includes(fileSuffix.toUpperCase())){
             //音频
@@ -162,7 +216,7 @@ onUnmounted(()=>{
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .ret {
     width: 100%;
     background-color: #56dc57;
@@ -181,5 +235,69 @@ onUnmounted(()=>{
     background-color: white;
     width: 80vw;
     height: 60vh;
+}
+
+
+.imgBox{
+  z-index: 9;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  box-sizing: border-box;
+  .blackScreen{
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+    overflow: hidden;
+    position: fixed;
+    opacity: 0.8;
+  }
+  .img{
+    .close-btn{
+      width: 25px;
+      height: 25px;
+      text-align: center;
+      line-height: 25px;
+      position: absolute;
+      top: 0;
+      right: 0;
+      opacity: 0.5;
+    }
+    .left-btn{
+      width: 35px;
+      height: 35px;
+      text-align: center;
+      line-height: 35px;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translate(0%, -50%);
+      opacity: 0.5;
+
+    }
+    .right-btn{
+      width: 35px;
+      height: 35px;
+      position: absolute;
+      text-align: center;
+      line-height: 35px;
+      top: 50%;
+      right: 0;
+      transform: translate(0%, -50%);
+      opacity: 0.5;
+    }
+    z-index: 10;
+    box-sizing: border-box;
+    overflow: hidden;
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    img{
+      width: 100%;
+      object-fit: contain;
+    }
+  }
 }
 </style>
