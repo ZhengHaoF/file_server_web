@@ -6,9 +6,8 @@
 </template>
 <script setup>
 import InfoTable from "@/components/InfoTable.vue";
-import {onMounted, ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import axios from "axios";
-import 'viewerjs/dist/viewer.css'
 import { api as viewerApi } from "v-viewer"
 import {useRoute, useRouter} from "vue-router";
 const router = useRouter()
@@ -134,9 +133,21 @@ const getFileList = () => {
         }
     })
 }
+const backChange = ()=>{
+  returnPath()
+}
 onMounted(() => {
-
+  if (window.history && window.history.pushState) {
+    // 往历史记录里面添加一条新的当前页面的url
+    history.pushState(null, null, document.URL);
+    // 给 popstate 绑定一个方法 监听页面刷新
+    window.addEventListener('popstate', backChange, false);//false阻止默认事件
+  }
     getFileList();
+})
+
+onUnmounted(()=>{
+  window.removeEventListener('popstate', backChange, false);//false阻止默认事件
 })
 
 
