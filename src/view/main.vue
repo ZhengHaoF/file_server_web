@@ -6,7 +6,7 @@
 </template>
 <script setup>
 import InfoTable from "@/components/InfoTable.vue";
-import {onMounted, onUnmounted, ref} from "vue";
+import {onActivated, onMounted, onUnmounted, ref} from "vue";
 import axios from "axios";
 import { api as viewerApi } from "v-viewer"
 import {useRoute, useRouter} from "vue-router";
@@ -82,6 +82,7 @@ const clickFile = (index) => {
         //是文件夹
         path.value += `__${fileInfo.name}`
         getFileList();
+        addHistory();
     } else {
         let fileSuffix = fileInfo.suffix;
         if (VIDEO.includes(fileSuffix.toUpperCase())) {
@@ -136,15 +137,20 @@ const getFileList = () => {
 const backChange = ()=>{
   returnPath()
 }
-onMounted(() => {
+
+const addHistory = ()=>{
   if (window.history && window.history.pushState) {
     // 往历史记录里面添加一条新的当前页面的url
     history.pushState(null, null, document.URL);
     // 给 popstate 绑定一个方法 监听页面刷新
     window.addEventListener('popstate', backChange, false);//false阻止默认事件
   }
-    getFileList();
+}
+onMounted(() => {
+  addHistory();
+  getFileList();
 })
+
 
 onUnmounted(()=>{
   window.removeEventListener('popstate', backChange, false);//false阻止默认事件
