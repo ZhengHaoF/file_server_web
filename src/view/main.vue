@@ -1,23 +1,33 @@
 <template>
-    <div>
-        <div class="imgBox" v-if="imgShow">
-          <div class="img">
-            <div class="close-btn" @click="headImg">
-              <close theme="outline" size="20" fill="#ffffff" :strokeWidth="5"/>
-            </div>
-            <div class="left-btn" @click="preImg">
-              <arrow-circle-left theme="outline" size="30" fill="#ffffff" :strokeWidth="5"/>
-            </div>
-            <div class="right-btn" @click="nextImg">
-              <arrow-circle-right theme="outline" size="30" fill="#ffffff" :strokeWidth="5"/>
-            </div>
-            <img :src="nowImageSrc"  alt="">
-          </div>
-          <div class="blackScreen" @click="headImg"></div>
+  <div>
+   <div style="height: calc(100vh - 90px)">
+     <InfoTable :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @copy-url="copyUrl"></InfoTable>
+   </div>
+    <div class="ret" @click="returnPath">返回</div>
+    <div v-if="imgShow" class="imgBox">
+      <div class="img">
+        <div class="close-btn" @click="headImg">
+          <close :strokeWidth="5" fill="#ffffff" size="20" theme="outline"/>
         </div>
-        <InfoTable :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @copy-url="copyUrl"></InfoTable>
-        <div class="ret" @click="returnPath">返回</div>
+        <div class="left-btn" @click="preImg">
+          <arrow-circle-left :strokeWidth="5" fill="#ffffff" size="30" theme="outline"/>
+        </div>
+        <div class="right-btn" @click="nextImg">
+          <arrow-circle-right :strokeWidth="5" fill="#ffffff" size="30" theme="outline"/>
+        </div>
+        <img :src="nowImageSrc" alt="">
+      </div>
+      <div class="blackScreen" @click="headImg"></div>
     </div>
+    <Dialog v-if="showDialog" :ok-btn-text="'返回'" :title="'预览方式'" @ok-btn="okBtn">
+      <template #body>
+        <ul class="play-list">
+          <li @click="playVideo('web')">网页播放</li>
+          <li @click="playVideo('vlc')">Vlc播放</li>
+        </ul>
+      </template>
+    </Dialog>
+  </div>
 </template>
 <script setup>
 import InfoTable from "@/components/InfoTable.vue";
@@ -25,12 +35,14 @@ import {Close,ArrowCircleLeft,ArrowCircleRight} from "@icon-park/vue-next";
 import {onMounted, onUnmounted, ref} from "vue";
 import axios from "axios";
 import {useRoute, useRouter} from "vue-router";
+import Dialog from "@/components/Dialog.vue";
 
 
-
+const showDialog = ref(false);
 const router = useRouter()
 const route = useRoute()
 const local = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`
+// const local = "http://localhost:3000"//测试用
 const path = ref("$")
 const tableData = ref([])
 const tableHeader = ref([
@@ -123,6 +135,26 @@ const ZIP = [".RAR", ".ZIP", ".7Z"];
 const AUDIO = [".WAV", ".MP3", ".OGG"];
 const DOC = [".DOC",".DOCX"];
 const EXCEL = [".XLS",".XLSX"];
+
+const okBtn = ()=>{
+  showDialog.value = false;
+}
+
+const playVideo = (t)=>{
+  if(t==='web'){
+    router.push({
+        path:"/VideoPlay",
+        query:{
+            url:playUrl.value,
+        }
+    })
+  }else{
+    window.open('vlc://' + playUrl.value)
+  }
+  showDialog.value = false;
+}
+
+const playUrl = ref("");
 const clickFile = (index) => {
     //文件信息
     let fileInfo = tableData.value[index];
@@ -135,12 +167,14 @@ const clickFile = (index) => {
         let fileSuffix = fileInfo.suffix;
         if (VIDEO.includes(fileSuffix.toUpperCase())) {
             //视频
-            router.push({
-                path:"/VideoPlay",
-                query:{
-                    url:getFileUrl(path.value, fileInfo.name),
-                }
-            })
+            // router.push({
+            //     path:"/VideoPlay",
+            //     query:{
+            //         url:getFileUrl(path.value, fileInfo.name),
+            //     }
+            // })
+            playUrl.value = getFileUrl(path.value, fileInfo.name)
+            showDialog.value = true;
         } else if (IMG.includes(fileSuffix.toUpperCase())) {
             //图片
             imgUrls.value = [];
@@ -236,13 +270,24 @@ onUnmounted(()=>{
     width: 80vw;
     height: 60vh;
 }
-
+.play-list{
+  li{
+    text-align: center;
+    line-height: 40px;
+    margin-left: 10px;
+    margin-right: 10px;
+    list-style: none;
+    color: #333;
+  }
+}
 
 .imgBox{
-  z-index: 9;
+  z-index: 99;
   width: 100%;
   height: 100%;
-  position: absolute;
+  position: fixed;
+  top: 0;
+  left: 0;
   box-sizing: border-box;
   .blackScreen{
     width: 100vw;

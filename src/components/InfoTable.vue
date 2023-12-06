@@ -63,7 +63,7 @@ const props = defineProps({
     },
     showMax: {
         type: Number,
-        default: 9999999999,
+        default: 99999,
     }
 })
 
@@ -101,7 +101,7 @@ watch(() => props.tableData, () => {
 
 <style lang="scss" scoped>
 .box {
-  height: calc(100vh - 90px);
+  height: 100%;
   overflow-y: scroll;
 }
 
