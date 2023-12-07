@@ -158,6 +158,7 @@ table {
 .file-name{
     padding-top: 5px;
     padding-bottom: 5px;
+    word-break:break-all;
     .icon-svg{
         vertical-align: middle;
     }
