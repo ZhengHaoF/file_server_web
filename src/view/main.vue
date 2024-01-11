@@ -136,7 +136,6 @@ const getFilePath = (filePath,fileName)=>{
 }
 const copyUrl = (index)=>{
   let fileInfo = tableData.value[index];
-  return;
   try {
     navigator.share({
       title: fileInfo.name,
