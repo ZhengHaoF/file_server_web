@@ -24,8 +24,9 @@
                         <file-code-one theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-else/>
                       {{ data[head.prop]}}
                     </div>
-                    <div v-else-if="head.prop === 'cz'" class="file-name" style="text-align: center">
+                    <div v-else-if="head.prop === 'cz'" v-if="data.isFile" class="file-name" style="text-align: center">
                         <button @click="copyUrl(index)">分享</button>
+                        <button @click="delFile(index)">删除</button>
                     </div>
                     <div v-else class="file-name">{{ data[head.prop] }}</div>
                 </td>
@@ -44,7 +45,7 @@ import {onMounted, ref, watch} from "vue";
 import {VideoTwo,ImageFiles,FileZip,SeoFolder,AudioFile,FileDoc,FileExcel,AdobePhotoshop,FileCodeOne} from '@icon-park/vue-next';
 const show = ref(false);
 const showTableData = ref([]);
-const emit = defineEmits(['clickFile','copyUrl'])
+const emit = defineEmits(['clickFile','copyUrl','delFile'])
 const VIDEO = [".MP4", ".AVI", ".MOV", ".FLV",".MKV"];
 const IMG = [".JPG", ".JPEG", ".PNG", ".WEBP"];
 const PS = [".PSD"];
@@ -86,6 +87,9 @@ const changeShow = () => {
 }
 const copyUrl = (index)=>{
     emit("copyUrl", index)
+}
+const delFile = (index)=>{
+    emit("delFile", index)
 }
 
 watch(() => props.tableData, () => {

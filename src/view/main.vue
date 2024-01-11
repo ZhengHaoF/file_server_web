@@ -1,7 +1,7 @@
 <template>
   <div>
    <div style="height: calc(100vh - 90px)">
-     <InfoTable :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @copy-url="copyUrl"></InfoTable>
+     <InfoTable :table-data="tableData" @del-file="delFile" :table-head="tableHeader" @clickFile="clickFile" @copy-url="copyUrl"></InfoTable>
    </div>
     <div class="ret" @click="returnPath">返回</div>
     <div v-if="imgShow" class="imgBox">
@@ -27,22 +27,30 @@
         </ul>
       </template>
     </Dialog>
+    <Dialog v-if="delDialog" :btnNum="2" :title="'提示'" @ok-btn="delBtn" @close-btn="closeBtn">
+      <template #body>
+        <div style="padding-top: 20px;padding-bottom: 20px">
+          是否删除文件
+        </div>
+      </template>
+    </Dialog>
   </div>
 </template>
 <script setup>
 import InfoTable from "@/components/InfoTable.vue";
 import {Close,ArrowCircleLeft,ArrowCircleRight} from "@icon-park/vue-next";
-import {onMounted, onUnmounted, ref} from "vue";
+import {nextTick, onMounted, onUnmounted, ref} from "vue";
 import axios from "axios";
 import {useRoute, useRouter} from "vue-router";
 import Dialog from "@/components/Dialog.vue";
 
 
 const showDialog = ref(false);
+const delDialog = ref(false);
 const router = useRouter()
 const route = useRoute()
-const local = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`
-// const local = "http://localhost:3000"//测试用
+// const local = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`
+const local = "http://localhost:3000"//测试用
 const path = ref("$")
 const tableData = ref([])
 const tableHeader = ref([
@@ -78,6 +86,7 @@ const imgUrls = ref([
 
 const nowImageSrc = ref("");
 const nowImgIndex = ref(0);
+const nowFileIndex = ref(0);
 const imgShow = ref(false);
 //下一张图片
 const nextImg = () => {
@@ -107,17 +116,27 @@ const headImg = ()=>{
 
 const getFileUrl = (filePath,fileName)=>{
     if (filePath === "$") {
-        filePath = ""
+      filePath = ""
     } else {
-        filePath = filePath.replace(/\$/g, "")
+      filePath = filePath.replace(/\$/g, "")
     }
     filePath = filePath.replace(/__/g, "/")
     console.log(`获取文件：${local}/getFile${filePath}/${fileName}`)
     return `${local}/getFile${filePath}/${fileName}`;
 }
 
+const getFilePath = (filePath,fileName)=>{
+  if (filePath === "$") {
+    filePath = ""
+  } else {
+    filePath = filePath.replace(/\$/g, "")
+  }
+  filePath = filePath.replace(/__/g, "/")
+  return `${filePath}/${fileName}`;
+}
 const copyUrl = (index)=>{
   let fileInfo = tableData.value[index];
+  return;
   try {
     navigator.share({
       title: fileInfo.name,
@@ -126,6 +145,10 @@ const copyUrl = (index)=>{
   }catch (e){
     alert(getFileUrl(path.value, fileInfo.name))
   }
+}
+const delFile = (index)=>{
+  delDialog.value = true;
+  nowFileIndex.value = index;
 }
 
 const VIDEO = [".MP4", ".AVI", ".MOV", ".FLV",".MKV"];
@@ -139,19 +162,38 @@ const EXCEL = [".XLS",".XLSX"];
 const okBtn = ()=>{
   showDialog.value = false;
 }
+const closeBtn = ()=>{
+  delDialog.value = false;
+}
+
+const delBtn = ()=>{
+  delDialog.value = false;
+  nextTick(()=>{
+    let fileInfo = tableData.value[nowFileIndex.value];
+    axios.post(`${local}/delFile`,{
+      filePath:getFilePath(path.value,fileInfo.name)
+    }).then((res, err) => {
+      if (res.status === 200) {
+        getFileList();
+      }
+    })
+  })
+}
 
 const playVideo = (t)=>{
-  if(t==='web'){
-    router.push({
+  showDialog.value = false;
+  nextTick(()=>{
+    if(t==='web'){
+      router.push({
         path:"/VideoPlay",
         query:{
-            url:playUrl.value,
+          url:playUrl.value,
         }
-    })
-  }else{
-    window.open('vlc://' + playUrl.value)
-  }
-  showDialog.value = false;
+      })
+    }else{
+      window.open('vlc://' + playUrl.value)
+    }
+  })
 }
 
 const playUrl = ref("");
@@ -167,12 +209,6 @@ const clickFile = (index) => {
         let fileSuffix = fileInfo.suffix;
         if (VIDEO.includes(fileSuffix.toUpperCase())) {
             //视频
-            // router.push({
-            //     path:"/VideoPlay",
-            //     query:{
-            //         url:getFileUrl(path.value, fileInfo.name),
-            //     }
-            // })
             playUrl.value = getFileUrl(path.value, fileInfo.name)
             showDialog.value = true;
         } else if (IMG.includes(fileSuffix.toUpperCase())) {

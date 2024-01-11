@@ -8,7 +8,7 @@
         </slot>
       </div>
       <div class="footer">
-        <div class="close-btn" v-if="props.btnNum > 1" @close="closeBtn">关闭</div>
+        <div class="close-btn" v-if="props.btnNum > 1" @click="closeBtn">关闭</div>
         <div class="ok-btn" @click="okBtn">{{props.okBtnText}}</div>
       </div>
     </div>
