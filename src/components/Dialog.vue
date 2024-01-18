@@ -53,6 +53,7 @@ const closeBtn = () => {
     width: 80vw;
     background-color: white;
     position: absolute;
+    border-radius: 5px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -91,6 +92,7 @@ const closeBtn = () => {
         text-align: center;
         box-sizing: border-box;
         border: 1px solid #a4a4a4;
+        border-radius: 5px;
         color: #a4a4a4;
         font-weight: bolder;
         line-height: 30px;
@@ -105,6 +107,7 @@ const closeBtn = () => {
         text-align: center;
         box-sizing: border-box;
         border: 1px solid #56dc57;
+        border-radius: 5px;
         color: #56dc57;
         background-color: #e8f6e9;
         font-weight: bolder;

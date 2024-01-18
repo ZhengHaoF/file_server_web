@@ -4,7 +4,8 @@
             <tr style="background-color: #f6f6f6">
                 <th v-for="item in tableHead"
                     :class="{'bgRed':item.bgColor==='red','bgGreen':item.bgColor==='green','textRed':item.textColor==='red','textGreen':item.textColor==='green'} "
-                    :style="{'width':item.width}">
+                    :style="{'width':item.width}"
+                >
                     {{ item.span }}
                 </th>
             </tr>
@@ -13,6 +14,7 @@
                 <td v-for="(head) in tableHead"
                     :class="{'textRed':head['textColor']==='red','textGreen':head['textColor']==='green'} ">
                     <div v-if="head.prop === 'name'" class="file-name" @click="clickFile(index)">
+                      <div class="file-logo">
                         <video-two class="icon-svg" theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-if="VIDEO.includes(data['suffix'].toUpperCase())"/>
                         <image-files class="icon-svg" theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-else-if="IMG.includes(data['suffix'].toUpperCase())"/>
                         <file-zip class="icon-svg" theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-else-if="ZIP.includes(data['suffix'].toUpperCase())"/>
@@ -22,11 +24,18 @@
                         <adobe-photoshop class="icon-svg" theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-else-if="PS.includes(data['suffix'].toUpperCase())"/>
                         <seo-folder class="icon-svg" theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-else-if="data['suffix']===''"/>
                         <file-code-one theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-else/>
-                      {{ data[head.prop]}}
+                      </div>
+                      <div class="file-text">
+                        {{ data[head.prop]}}
+                      </div>
                     </div>
-                    <div v-else-if="head.prop === 'cz'" v-if="data.isFile" class="file-name" style="text-align: center">
-                        <button @click="copyUrl(index)">分享</button>
-                        <button @click="delFile(index)">删除</button>
+                    <div v-else-if="head.prop === 'cz'" v-if="data.isFile" class="file-name" style="display: flex;text-align: center">
+                        <div style="flex: 1">
+                          <button @click="copyUrl(index)">分享</button>
+                        </div>
+                        <div style="flex: 1">
+                          <button @click="delFile(index)">删除</button>
+                        </div>
                     </div>
                     <div v-else class="file-name">{{ data[head.prop] }}</div>
                 </td>
@@ -132,7 +141,7 @@ table {
   }
 
   th {
-      height: 40px;
+    height: 40px;
   }
 
   td {
@@ -159,12 +168,26 @@ table {
   margin: 0 auto;
 }
 
-.file-name{
-    padding-top: 5px;
-    padding-bottom: 5px;
-    word-break:break-all;
-    .icon-svg{
-        vertical-align: middle;
-    }
+.file-name {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  word-break: break-all;
+  display: flex;
+
+  .icon-svg {
+    vertical-align: middle;
+  }
+
+  .file-logo {
+    min-width: 40px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .file-text {
+
+  }
 }
 </style>

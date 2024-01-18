@@ -1,10 +1,17 @@
 <template>
   <div>
-    <div style="height: calc(100vh - 80px)">
+    <div class="top-box" @click="returnPath">
+      <div class="ret">
+        <return class="icon-svg" theme="outline" size="24" fill="#f6823b" :strokeWidth="2"/>
+      </div>
+      <div class="top-title">
+        {{getFilePath(path,'')}}
+      </div>
+    </div>
+    <div style="height: 100%;padding-top: 30px">
       <InfoTable :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
                  @copy-url="copyUrl"></InfoTable>
     </div>
-    <div class="ret" @click="returnPath">返回</div>
     <div v-if="imgShow" class="imgBox">
       <div class="img">
         <div class="close-btn" @click="headImg">
@@ -39,19 +46,20 @@
 </template>
 <script setup>
 import InfoTable from "@/components/InfoTable.vue";
-import {ArrowCircleLeft, ArrowCircleRight, Close} from "@icon-park/vue-next";
+import {ArrowCircleLeft, ArrowCircleRight, Close, VideoTwo} from "@icon-park/vue-next";
 import {nextTick, onMounted, onUnmounted, ref, watch} from "vue";
 import axios from "axios";
 import {useRoute, useRouter} from "vue-router";
 import Dialog from "@/components/Dialog.vue";
+import {Return} from '@icon-park/vue-next';
 
 
 const showDialog = ref(false);
 const delDialog = ref(false);
 const router = useRouter()
 const route = useRoute()
-const local = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`
-// const local = "http://localhost:3000"//测试用
+// const local = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`
+const local = "http://localhost:3000"//测试用
 const path = ref("$")
 const tableData = ref([])
 const tableHeader = ref([
@@ -292,15 +300,29 @@ watch(path, (newName, oldName) => {
 </script>
 
 <style lang="scss" scoped>
-.ret {
+.top-box {
   width: 100%;
-  background-color: #56dc57;
-  text-align: center;
-  line-height: 50px;
+  line-height: 30px;
   position: fixed;
-  bottom: 0;
+  background-color: #F6F6F6;
+  top: 0;
   user-select: none;
   cursor: pointer;
+  display: flex;
+  .ret{
+    flex: 2;
+    text-align: center;
+  }
+  .top-title{
+    flex: 8;
+    padding-left: 20px;
+    overflow : hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /* 限制在一个块元素显示的文本的行数 */
+    -webkit-box-orient: vertical; /* 垂直排列 */
+    word-break: break-all;  /* 内容自动换行 */
+  }
 }
 
 .show-play {
