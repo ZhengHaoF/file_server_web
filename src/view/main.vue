@@ -27,21 +27,25 @@
       </div>
       <div class="blackScreen" @click="headImg"></div>
     </div>
-    <Dialog v-if="showDialog" :ok-btn-text="'返回'" :title="'预览方式'" @ok-btn="okBtn">
-      <template #body>
-        <ul class="play-list">
-          <li @click="playVideo('web')">网页播放</li>
-          <li @click="playVideo('vlc')">Vlc播放</li>
-        </ul>
-      </template>
-    </Dialog>
-    <Dialog v-if="delDialog" :btnNum="2" :title="'提示'" @ok-btn="delBtn" @close-btn="closeBtn">
-      <template #body>
-        <div style="padding-top: 20px;padding-bottom: 20px">
-          是否删除文件
-        </div>
-      </template>
-    </Dialog>
+    <Transition>
+      <Dialog v-if="showDialog" :ok-btn-text="'返回'" :title="'预览方式'" @ok-btn="okBtn">
+        <template #body>
+          <ul class="play-list">
+            <li @click="playVideo('web')">网页播放</li>
+            <li @click="playVideo('vlc')">Vlc播放</li>
+          </ul>
+        </template>
+      </Dialog>
+    </Transition>
+    <Transition>
+      <Dialog v-if="delDialog" :btnNum="2" :title="'提示'" @ok-btn="delBtn" @close-btn="closeBtn">
+        <template #body>
+          <div style="padding-top: 20px;padding-bottom: 20px">
+            是否删除文件
+          </div>
+        </template>
+      </Dialog>
+    </Transition>
   </div>
 </template>
 <script setup>
@@ -416,4 +420,14 @@ watch(path, (newName, oldName) => {
     }
   }
 }
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+}
+
 </style>
