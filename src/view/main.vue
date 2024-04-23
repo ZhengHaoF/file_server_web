@@ -1,16 +1,22 @@
 <template>
   <div>
-    <div class="top-box" @click="returnPath">
-      <div class="ret">
-        <return class="icon-svg" theme="outline" size="24" fill="#f6823b" :strokeWidth="2"/>
+    <div class="top-box">
+      <div class="ret" @click="returnPath">
+        <return :strokeWidth="2" class="icon-svg" fill="#f6823b" size="24" theme="outline"/>
       </div>
       <div class="top-title">
-        {{getFilePath(path,'')}}
+        {{ getFilePath(path, '') }}
+      </div>
+      <div class="mode" @click="changeMode">
+        <list-bottom v-if="model==='list'" theme="outline" size="28" fill="#f6823b" :strokeWidth="3"/>
+        <all-application v-else theme="outline" size="28" fill="#f6823b" :strokeWidth="3"/>
       </div>
     </div>
     <div style="height: 100%;padding-top: 30px">
-      <InfoTable :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
+      <InfoTable v-if="model==='list'" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
                  @copy-url="copyUrl"></InfoTable>
+      <image-table v-else :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
+                   @copy-url="copyUrl"></image-table>
     </div>
     <div v-if="imgShow" class="imgBox">
       <div class="img">
@@ -49,13 +55,13 @@
   </div>
 </template>
 <script setup>
-import InfoTable from "@/components/InfoTable.vue";
-import {ArrowCircleLeft, ArrowCircleRight, Close, VideoTwo} from "@icon-park/vue-next";
+import {ArrowCircleLeft, ArrowCircleRight, Close, Return,ListBottom,AllApplication} from "@icon-park/vue-next";
 import {nextTick, onMounted, onUnmounted, ref, watch} from "vue";
 import axios from "axios";
 import {useRoute, useRouter} from "vue-router";
 import Dialog from "@/components/Dialog.vue";
-import {Return} from '@icon-park/vue-next';
+import ImageTable from "@/components/ImageTable.vue";
+import InfoTable from "@/components/InfoTable.vue";
 
 
 const showDialog = ref(false);
@@ -263,6 +269,8 @@ const getFileList = () => {
         item['size'] = (Number(item['size']) / 1024 / 1024).toFixed(2) + "MB";
         if (item['isDirectory']) {
           item['size'] = "";
+        }else{
+          item['url'] = getFileUrl(path.value, item.name);
         }
         return item;
       })
@@ -280,6 +288,13 @@ const addHistory = () => {
     // 给 popstate 绑定一个方法 监听页面刷新
     window.addEventListener('popstate', backChange, false);//false阻止默认事件
   }
+}
+
+
+const model = ref("list")
+//切换图片/列表模式
+const changeMode = () => {
+  model.value = model.value === "list"?"":"list"
 }
 onMounted(() => {
   let pathValue = localStorage.getItem("path")
@@ -313,19 +328,25 @@ watch(path, (newName, oldName) => {
   user-select: none;
   cursor: pointer;
   display: flex;
-  .ret{
+
+  .ret {
     flex: 2;
     text-align: center;
   }
-  .top-title{
-    flex: 8;
+
+  .top-title {
+    flex: 7;
     padding-left: 20px;
-    overflow : hidden;
+    overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 1; /* 限制在一个块元素显示的文本的行数 */
     -webkit-box-orient: vertical; /* 垂直排列 */
-    word-break: break-all;  /* 内容自动换行 */
+    word-break: break-all; /* 内容自动换行 */
+  }
+
+  .mode {
+    flex: 1;
   }
 }
 
@@ -420,6 +441,7 @@ watch(path, (newName, oldName) => {
     }
   }
 }
+
 .v-enter-active,
 .v-leave-active {
   transition: opacity 0.2s ease;
