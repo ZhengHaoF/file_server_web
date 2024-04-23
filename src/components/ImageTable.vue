@@ -1,10 +1,10 @@
 <template>
   <div class="box">
     <div v-for="(data,index) in showTableData" :key="index" class="item" @click="clickFile(index)">
-      <div class="icon" :style="{width:`${iconSize}px`,height:`${iconSize}px`}">
+      <div class="icon">
         <seo-folder class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-if="data['isDirectory']"/>
         <video-two class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-else-if="VIDEO.includes(data['suffix'].toUpperCase())"/>
-        <img class="icon-svg" v-lazy="data.url + `!${iconSize}x${iconSize}`" style="object-fit: cover;width: 100%;height: 100%" v-else-if="IMG.includes(data['suffix'].toUpperCase())" alt="data.name" src=""/>
+        <img class="icon-svg" v-lazy="data.url + `!${imgSize}x${imgSize}`" style="object-fit: cover;width: 100%;height: 100%" v-else-if="IMG.includes(data['suffix'].toUpperCase())" alt="data.name" src=""/>
         <file-zip class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-else-if="ZIP.includes(data['suffix'].toUpperCase())"/>
         <audio-file class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-else-if="AUDIO.includes(data['suffix'].toUpperCase())"/>
         <file-doc class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-else-if="DOC.includes(data['suffix'].toUpperCase())"/>
@@ -35,7 +35,8 @@ const AUDIO = [".WAV", ".MP3", ".OGG"];
 const DOC = [".DOC",".DOCX"];
 const EXCEL = [".XLS",".XLSX"];
 
-const iconSize = ref("80")
+const iconSize = ref("100%")
+const imgSize = ref("200")
 const props = defineProps({
   tableData: {
     type: Array,
