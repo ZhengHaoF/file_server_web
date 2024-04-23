@@ -1,10 +1,10 @@
 <template>
   <div class="box">
-    <div v-for="(data,index) in showTableData" class="item" @click="clickFile(index)">
+    <div v-for="(data,index) in showTableData" :key="index" class="item" @click="clickFile(index)">
       <div class="icon" :style="{width:`${iconSize}px`,height:`${iconSize}px`}">
         <seo-folder class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-if="data['isDirectory']"/>
         <video-two class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-else-if="VIDEO.includes(data['suffix'].toUpperCase())"/>
-        <img class="icon-svg" :src="data.url + `!${iconSize}x${iconSize}`" style="object-fit: cover;width: 100%;height: 100%" v-else-if="IMG.includes(data['suffix'].toUpperCase())" alt="data.name"/>
+        <img class="icon-svg" v-lazy="data.url + `!${iconSize}x${iconSize}`" style="object-fit: cover;width: 100%;height: 100%" v-else-if="IMG.includes(data['suffix'].toUpperCase())" alt="data.name" src=""/>
         <file-zip class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-else-if="ZIP.includes(data['suffix'].toUpperCase())"/>
         <audio-file class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-else-if="AUDIO.includes(data['suffix'].toUpperCase())"/>
         <file-doc class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-else-if="DOC.includes(data['suffix'].toUpperCase())"/>
@@ -46,6 +46,10 @@ const props = defineProps({
     default: 99999,
   }
 })
+
+
+
+
 
 onMounted(() => {
   showTableData.value = props.tableData.slice(0, props.showMax);
