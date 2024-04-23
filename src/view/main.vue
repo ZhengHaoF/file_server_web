@@ -19,10 +19,10 @@
                    @copy-url="copyUrl"></image-table>
     </div>
     <div v-if="imgShow" class="imgBox">
+      <div class="close-btn" @click="headImg">
+        <close :strokeWidth="5" fill="#ffffff" size="30" theme="outline"/>
+      </div>
       <div class="img">
-        <div class="close-btn" @click="headImg">
-          <close :strokeWidth="5" fill="#ffffff" size="20" theme="outline"/>
-        </div>
         <div class="left-btn" @click="preImg">
           <arrow-circle-left :strokeWidth="5" fill="#ffffff" size="30" theme="outline"/>
         </div>
@@ -379,7 +379,17 @@ watch(path, (newName, oldName) => {
   top: 0;
   left: 0;
   box-sizing: border-box;
-
+  .close-btn {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    line-height: 25px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    opacity: 0.5;
+    z-index: 9999;
+  }
   .blackScreen {
     width: 100vw;
     height: 100vh;
@@ -390,17 +400,6 @@ watch(path, (newName, oldName) => {
   }
 
   .img {
-    .close-btn {
-      width: 25px;
-      height: 25px;
-      text-align: center;
-      line-height: 25px;
-      position: absolute;
-      top: 0;
-      right: 0;
-      opacity: 0.5;
-    }
-
     .left-btn {
       width: 35px;
       height: 35px;
