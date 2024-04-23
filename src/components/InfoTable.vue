@@ -15,14 +15,14 @@
                     :class="{'textRed':head['textColor']==='red','textGreen':head['textColor']==='green'} ">
                     <div v-if="head.prop === 'name'" class="file-name" @click="clickFile(index)">
                       <div class="file-logo">
-                        <video-two class="icon-svg" theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-if="VIDEO.includes(data['suffix'].toUpperCase())"/>
+                        <seo-folder class="icon-svg" theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-if="data['isDirectory']"/>
+                        <video-two class="icon-svg" theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-else-if="VIDEO.includes(data['suffix'].toUpperCase())"/>
                         <image-files class="icon-svg" theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-else-if="IMG.includes(data['suffix'].toUpperCase())"/>
                         <file-zip class="icon-svg" theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-else-if="ZIP.includes(data['suffix'].toUpperCase())"/>
                         <audio-file class="icon-svg" theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-else-if="AUDIO.includes(data['suffix'].toUpperCase())"/>
                         <file-doc class="icon-svg" theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-else-if="DOC.includes(data['suffix'].toUpperCase())"/>
                         <file-excel class="icon-svg" theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-else-if="EXCEL.includes(data['suffix'].toUpperCase())"/>
                         <adobe-photoshop class="icon-svg" theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-else-if="PS.includes(data['suffix'].toUpperCase())"/>
-                        <seo-folder class="icon-svg" theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-else-if="data['suffix']===''"/>
                         <file-code-one theme="outline" size="24" fill="#f6823b" :strokeWidth="2" v-else/>
                       </div>
                       <div class="file-text">
