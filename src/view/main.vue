@@ -69,7 +69,12 @@ const delDialog = ref(false);
 const router = useRouter()
 const route = useRoute()
 // const local = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`
-const local = "http://localhost:3000"//测试用
+let local;
+if(import.meta.env.MODE === "development"){
+  local = "http://localhost:3000"//测试用
+}else{
+  local = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`
+}
 const path = ref("$")
 const tableData = ref([])
 const tableHeader = ref([
