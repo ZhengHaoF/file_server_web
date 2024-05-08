@@ -6,19 +6,19 @@ import DPlayer from 'dplayer';
 import {onBeforeUnmount, onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 const route = useRoute()
-
-const dp = ref(null)
+let dp;
 onMounted(()=>{
     let url = route.query.url;
-     dp.value = new DPlayer({
+     dp = new DPlayer({
         container: document.getElementById('dplayer'),
         video: {
             url: url,
+            type:"auto"
         },
     });
 })
 onBeforeUnmount(()=>{
-    dp.value.destroy();
+    dp.destroy();
 })
 
 </script>

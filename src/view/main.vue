@@ -39,6 +39,7 @@
           <ul class="play-list">
             <li @click="playVideo('web')">网页播放</li>
             <li @click="playVideo('vlc')">Vlc播放</li>
+            <li @click="playVideo('html')">原生播放器</li>
           </ul>
         </template>
       </Dialog>
@@ -212,8 +213,15 @@ const playVideo = (t) => {
           url: playUrl.value,
         }
       })
-    } else {
+    } else if (t === 'vlc') {
       window.open('vlc://' + playUrl.value)
+    }else{
+      router.push({
+        path: "/HtmlVideoPlay",
+        query: {
+          url: playUrl.value,
+        }
+      })
     }
   })
 }

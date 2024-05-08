@@ -7,6 +7,7 @@ import {
 import Home from '@/view/main.vue'
 import VideoPlay from '@/view/VideoPlay.vue'
 import AudioPlay from '@/view/AudioPlay.vue'
+import HtmlVideoPlay from '@/view/HtmlVideoPlay.vue'
 
 const routes = [
   {
@@ -16,6 +17,10 @@ const routes = [
   {
     path: '/VideoPlay',
     component: VideoPlay
+  },
+  {
+    path: '/HtmlVideoPlay',
+    component: HtmlVideoPlay
   },
   {
     path: '/AudioPlay',
