@@ -7,15 +7,16 @@
       <div class="top-title">
         {{ getFilePath(path, '') }}
       </div>
-      <div class="mode" @click="changeMode">
-        <list-bottom v-if="model==='list'" theme="outline" size="28" fill="#f6823b" :strokeWidth="3"/>
-        <all-application v-else theme="outline" size="28" fill="#f6823b" :strokeWidth="3"/>
+      <div class="mode">
+        <list-bottom @click="changeMode" v-if="model==='list'" theme="outline" size="28" fill="#f6823b" :strokeWidth="3"/>
+        <all-application @click="changeMode" v-else theme="outline" size="28" fill="#f6823b" :strokeWidth="3"/>
+        <setting-two  @click="SetString" style="float: right" theme="outline" size="28" fill="#f6823b" :strokeWidth="3"/>
       </div>
     </div>
     <div style="height: 100%;padding-top: 30px">
       <InfoTable v-if="model==='list'" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
                  @copy-url="copyUrl"></InfoTable>
-      <image-table v-else :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
+      <image-table v-else :img-size="imgSize" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
                    @copy-url="copyUrl"></image-table>
     </div>
     <div v-if="imgShow" class="imgBox">
@@ -53,10 +54,22 @@
         </template>
       </Dialog>
     </Transition>
+    <Transition>
+      <Dialog v-if="setStringShow" :btnNum="1" :title="'设置'" @ok-btn="setOk">
+        <template #body>
+          <div style="padding-top: 10px;padding-bottom: 5px">
+            预览图像素：<input type="number" class="PxInput" v-model="imgSize"> px
+          </div>
+          <div style="padding-top: 5px;padding-bottom: 10px">
+            <div class="close-btn" @click="clearCache">清空缓存</div>
+          </div>
+        </template>
+      </Dialog>
+    </Transition>
   </div>
 </template>
 <script setup>
-import {ArrowCircleLeft, ArrowCircleRight, Close, Return,ListBottom,AllApplication} from "@icon-park/vue-next";
+import {ArrowCircleLeft, ArrowCircleRight, Close, Return,ListBottom,AllApplication,SettingTwo} from "@icon-park/vue-next";
 import {nextTick, onMounted, onUnmounted, ref, watch} from "vue";
 import axios from "axios";
 import {useRoute, useRouter} from "vue-router";
@@ -69,7 +82,7 @@ const showDialog = ref(false);
 const delDialog = ref(false);
 const router = useRouter()
 const route = useRoute()
-// const local = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`
+const imgSize = ref(500)
 let local;
 if(import.meta.env.MODE === "development"){
   local = "http://localhost:3000"//测试用
@@ -250,7 +263,6 @@ const clickFile = (index) => {
         if (IMG.includes(fileSuffix2.toUpperCase())) {
           if (tableData.value[i].name === tableData.value[index].name) {
             nowImgIndex.value = num;
-            console.log(nowImgIndex.value, 123456789)
           }
           num++;
           imgUrls.value.push(getFileUrl(path.value, tableData.value[i].name))
@@ -307,10 +319,29 @@ const addHistory = () => {
 const model = ref("list")
 //切换图片/列表模式
 const changeMode = () => {
-  model.value = model.value === "list"?"":"list"
+  model.value = model.value === "list"?"img":"list"
+  localStorage.setItem("model",model.value)
 }
+
+const setStringShow = ref(false)
+const SetString = ()=>{
+  setStringShow.value = true;
+}
+
+const setOk = ()=>{
+  setStringShow.value = false;
+  localStorage.setItem("imgSize",String(imgSize.value))
+}
+
+const clearCache = ()=>{
+  localStorage.clear();
+  location.reload();
+}
+
 onMounted(() => {
-  let pathValue = localStorage.getItem("path")
+  imgSize.value = Number(localStorage.getItem("imgSize") || 500);
+  model.value = localStorage.getItem("model") || "list";
+  let pathValue = localStorage.getItem("path");
   if (pathValue) {
     path.value = pathValue;
   }
@@ -318,11 +349,9 @@ onMounted(() => {
   getFileList();
 })
 
-
 onUnmounted(() => {
   window.removeEventListener('popstate', backChange, false);//false阻止默认事件
 })
-
 
 watch(path, (newName, oldName) => {
   localStorage.setItem("path", newName);
@@ -348,7 +377,7 @@ watch(path, (newName, oldName) => {
   }
 
   .top-title {
-    flex: 7;
+    flex: 6;
     padding-left: 20px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -359,7 +388,7 @@ watch(path, (newName, oldName) => {
   }
 
   .mode {
-    flex: 1;
+    flex: 2;
   }
 }
 
@@ -464,4 +493,38 @@ watch(path, (newName, oldName) => {
   opacity: 0;
 }
 
+.PxInput{
+  width: 40px;
+  padding: 2px;
+}
+
+.ok-btn {
+  flex: 1;
+  margin-left: 20px;
+  margin-right: 20px;
+  text-align: center;
+  box-sizing: border-box;
+  border: 1px solid #56dc57;
+  border-radius: 5px;
+  color: #56dc57;
+  background-color: #e8f6e9;
+  font-weight: bolder;
+  line-height: 30px;
+  height: 30px;
+  font-size: 14px;
+}
+.close-btn {
+  flex: 1;
+  margin-left: 20px;
+  margin-right: 20px;
+  text-align: center;
+  box-sizing: border-box;
+  border: 1px solid #a4a4a4;
+  border-radius: 5px;
+  color: #a4a4a4;
+  font-weight: bolder;
+  line-height: 30px;
+  height: 30px;
+  font-size: 14px;
+}
 </style>

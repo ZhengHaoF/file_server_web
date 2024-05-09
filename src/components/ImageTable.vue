@@ -36,7 +36,6 @@ const DOC = [".DOC",".DOCX"];
 const EXCEL = [".XLS",".XLSX"];
 
 const iconSize = ref("100%")
-const imgSize = ref("200")
 const props = defineProps({
   tableData: {
     type: Array,
@@ -45,6 +44,10 @@ const props = defineProps({
   showMax: {
     type: Number,
     default: 99999,
+  },
+  imgSize:{
+    type: Number,
+    default: 500,
   }
 })
 
