@@ -20,7 +20,7 @@
                    @copy-url="copyUrl"></image-table>
     </div>
     <div v-if="imgShow" class="imgBox">
-      <div class="close-btn" @click="headImg">
+      <div class="close-icon" @click="headImg">
         <close :strokeWidth="5" fill="#ffffff" size="30" theme="outline"/>
       </div>
       <div class="img">
@@ -421,16 +421,18 @@ watch(path, (newName, oldName) => {
   top: 0;
   left: 0;
   box-sizing: border-box;
-  .close-btn {
-    width: 30px;
-    height: 30px;
+  .close-icon {
+    background-color: black;
+    width: 40px;
+    height: 40px;
     text-align: center;
-    line-height: 25px;
+    line-height: 50px;
     position: absolute;
     top: 10px;
     right: 10px;
     opacity: 0.5;
     z-index: 9999;
+    border-radius: 10px;
   }
   .blackScreen {
     width: 100vw;
@@ -443,28 +445,31 @@ watch(path, (newName, oldName) => {
 
   .img {
     .left-btn {
-      width: 35px;
-      height: 35px;
-      text-align: center;
-      line-height: 35px;
+      width: 40px;
+      height: 40px;
       position: absolute;
+      text-align: center;
+      line-height: 50px;
       top: 50%;
       left: 0;
       transform: translate(0%, -50%);
       opacity: 0.5;
-
+      background-color: black;
+      border-radius: 10px;
     }
 
     .right-btn {
-      width: 35px;
-      height: 35px;
+      width: 40px;
+      height: 40px;
       position: absolute;
       text-align: center;
-      line-height: 35px;
+      line-height: 50px;
       top: 50%;
       right: 0;
       transform: translate(0%, -50%);
       opacity: 0.5;
+      background-color: black;
+      border-radius: 10px;
     }
 
     z-index: 10;
