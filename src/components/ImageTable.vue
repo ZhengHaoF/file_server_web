@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <div v-for="(data,index) in showTableData" :key="index" class="item" @click="clickFile(index)">
+    <div v-for="(data,index) in showTableData" :key="index" class="item" :style="{width:`calc(100%/${columns})`}" @click="clickFile(index)">
       <div class="icon">
         <seo-folder class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-if="data['isDirectory']"/>
         <video-two class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-else-if="VIDEO.includes(data['suffix'].toUpperCase())"/>
@@ -48,6 +48,10 @@ const props = defineProps({
   imgSize:{
     type: Number,
     default: 500,
+  },
+  columns:{
+    type: Number,
+    default: 3,
   }
 })
 
@@ -99,7 +103,6 @@ watch(() => props.tableData, () => {
 }
 
 .item{
-  width: calc(100%/3);
   text-align: center;
   font-size: 14px;
   .icon{

@@ -16,7 +16,7 @@
     <div style="height: 100%;padding-top: 30px">
       <InfoTable v-if="model==='list'" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
                  @copy-url="copyUrl"></InfoTable>
-      <image-table v-else :img-size="imgSize" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
+      <image-table v-else :columns="columns" :img-size="imgSize" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
                    @copy-url="copyUrl"></image-table>
     </div>
     <div v-if="imgShow" class="imgBox">
@@ -57,8 +57,11 @@
     <Transition>
       <Dialog v-if="setStringShow" :btnNum="1" :title="'设置'" @ok-btn="setOk">
         <template #body>
-          <div style="padding-top: 10px;padding-bottom: 5px">
+          <div style="padding-top: 12px;padding-bottom: 5px">
             预览图像素：<input type="number" class="PxInput" v-model="imgSize"> px
+          </div>
+          <div style="padding-top: 12px;padding-bottom: 5px">
+            图片模式列数：<input type="number" class="PxInput" v-model="columns"> 列
           </div>
           <div style="padding-top: 5px;padding-bottom: 10px">
             <div class="close-btn" @click="clearCache">清空缓存</div>
@@ -82,7 +85,10 @@ const showDialog = ref(false);
 const delDialog = ref(false);
 const router = useRouter()
 const route = useRoute()
+//图片长边大小
 const imgSize = ref(500)
+//列数
+const columns = ref(3)
 let local;
 if(import.meta.env.MODE === "development"){
   local = "http://localhost:3000"//测试用
@@ -331,6 +337,7 @@ const SetString = ()=>{
 const setOk = ()=>{
   setStringShow.value = false;
   localStorage.setItem("imgSize",String(imgSize.value))
+  localStorage.setItem("columns",String(columns.value))
 }
 
 const clearCache = ()=>{
@@ -340,6 +347,7 @@ const clearCache = ()=>{
 
 onMounted(() => {
   imgSize.value = Number(localStorage.getItem("imgSize") || 500);
+  columns.value = Number(localStorage.getItem("columns") || 3);
   model.value = localStorage.getItem("model") || "list";
   let pathValue = localStorage.getItem("path");
   if (pathValue) {
@@ -503,33 +511,4 @@ watch(path, (newName, oldName) => {
   padding: 2px;
 }
 
-.ok-btn {
-  flex: 1;
-  margin-left: 20px;
-  margin-right: 20px;
-  text-align: center;
-  box-sizing: border-box;
-  border: 1px solid #56dc57;
-  border-radius: 5px;
-  color: #56dc57;
-  background-color: #e8f6e9;
-  font-weight: bolder;
-  line-height: 30px;
-  height: 30px;
-  font-size: 14px;
-}
-.close-btn {
-  flex: 1;
-  margin-left: 20px;
-  margin-right: 20px;
-  text-align: center;
-  box-sizing: border-box;
-  border: 1px solid #a4a4a4;
-  border-radius: 5px;
-  color: #a4a4a4;
-  font-weight: bolder;
-  line-height: 30px;
-  height: 30px;
-  font-size: 14px;
-}
 </style>
