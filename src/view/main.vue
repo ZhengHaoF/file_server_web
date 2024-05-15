@@ -19,21 +19,23 @@
       <image-table v-else :columns="columns" :img-size="imgSize" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
                    @copy-url="copyUrl"></image-table>
     </div>
-    <div v-if="imgShow" class="imgBox">
-      <div class="close-icon" @click="headImg">
-        <close :strokeWidth="5" fill="#ffffff" size="30" theme="outline"/>
-      </div>
-      <div class="img">
-        <div class="left-btn" @click="preImg">
-          <arrow-circle-left :strokeWidth="5" fill="#ffffff" size="30" theme="outline"/>
+    <Transition>
+      <div v-if="imgShow" class="imgBox">
+        <div class="close-icon" @click="headImg">
+          <close :strokeWidth="5" fill="#ffffff" size="30" theme="outline"/>
         </div>
-        <div class="right-btn" @click="nextImg">
-          <arrow-circle-right :strokeWidth="5" fill="#ffffff" size="30" theme="outline"/>
+        <div class="img">
+          <div class="left-btn" @click="preImg">
+            <arrow-circle-left :strokeWidth="5" fill="#ffffff" size="30" theme="outline"/>
+          </div>
+          <div class="right-btn" @click="nextImg">
+            <arrow-circle-right :strokeWidth="5" fill="#ffffff" size="30" theme="outline"/>
+          </div>
+          <img :src="nowImageSrc" alt="">
         </div>
-        <img :src="nowImageSrc" alt="">
+        <div class="blackScreen" @click="headImg"></div>
       </div>
-      <div class="blackScreen" @click="headImg"></div>
-    </div>
+    </Transition>
     <Transition>
       <Dialog v-if="showDialog" :ok-btn-text="'返回'" :title="'预览方式'" @ok-btn="okBtn">
         <template #body>
@@ -121,8 +123,11 @@ const tableHeader = ref([
 
 
 const returnPath = () => {
-  if(imgShow.value){
+  if(imgShow.value || showDialog.value || delDialog.value || setStringShow.value){
     imgShow.value = false;
+    showDialog.value = false;
+    delDialog.value = false;
+    setStringShow.value = false;
   }else{
     path.value = path.value.slice(0, path.value.lastIndexOf("__") === -1 ? path.value.length : path.value.lastIndexOf("__"));
     getFileList();
