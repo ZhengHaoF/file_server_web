@@ -15,5 +15,17 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
-  }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        // manualChunks 配置
+        manualChunks: {
+          // 将组件库的代码打包
+          'icon': ['@icon-park/vue-next'],
+          'pick-colors': ['vue-pick-colors']
+        },
+      },
+    }
+  },
 })
