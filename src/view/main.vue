@@ -13,7 +13,7 @@
         <setting-two  @click="SetString" style="float: right" theme="outline" size="28" fill="#f6823b" :strokeWidth="3"/>
       </div>
     </div>
-    <div style="height: 100%;padding-top: 30px">
+    <div style="height: 100%;padding-top: 40px">
       <InfoTable v-if="model==='list'" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
                  @copy-url="copyUrl"></InfoTable>
       <image-table v-else :columns="columns" :img-size="imgSize" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
@@ -121,8 +121,12 @@ const tableHeader = ref([
 
 
 const returnPath = () => {
-  path.value = path.value.slice(0, path.value.lastIndexOf("__") === -1 ? path.value.length : path.value.lastIndexOf("__"));
-  getFileList();
+  if(imgShow.value){
+    imgShow.value = false;
+  }else{
+    path.value = path.value.slice(0, path.value.lastIndexOf("__") === -1 ? path.value.length : path.value.lastIndexOf("__"));
+    getFileList();
+  }
 }
 
 const imgUrls = ref([])
@@ -371,10 +375,10 @@ watch(path, (newName, oldName) => {
 <style lang="scss" scoped>
 .top-box {
   width: 100%;
-  line-height: 30px;
   position: fixed;
   background-color: #F6F6F6;
   top: 0;
+  padding-top: 5px;
   user-select: none;
   cursor: pointer;
   display: flex;
@@ -386,7 +390,6 @@ watch(path, (newName, oldName) => {
 
   .top-title {
     flex: 6;
-    padding-left: 20px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -397,6 +400,7 @@ watch(path, (newName, oldName) => {
 
   .mode {
     flex: 2;
+    padding-right: 5px;
   }
 }
 
