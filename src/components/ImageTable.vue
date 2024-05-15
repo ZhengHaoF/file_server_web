@@ -2,15 +2,15 @@
   <div class="box">
     <div v-for="(data,index) in showTableData" :key="index" class="item" :style="{width:`calc(100%/${columns})`}" @click="clickFile(index)">
       <div class="icon">
-        <seo-folder class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-if="data['isDirectory']"/>
-        <video-two class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-else-if="VIDEO.includes(data['suffix'].toUpperCase())"/>
+        <seo-folder class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor" :strokeWidth="2" v-if="data['isDirectory']"/>
+        <video-two class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="VIDEO.includes(data['suffix'].toUpperCase())"/>
         <img class="icon-svg" v-lazy="data.url + `!${imgSize}x${imgSize}`" style="object-fit: cover;width: 100%;height: 100%;aspect-ratio:1/1" v-else-if="IMG.includes(data['suffix'].toUpperCase())" alt="data.name" src=""/>
-        <file-zip class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-else-if="ZIP.includes(data['suffix'].toUpperCase())"/>
-        <audio-file class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-else-if="AUDIO.includes(data['suffix'].toUpperCase())"/>
-        <file-doc class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-else-if="DOC.includes(data['suffix'].toUpperCase())"/>
-        <file-excel class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-else-if="EXCEL.includes(data['suffix'].toUpperCase())"/>
-        <adobe-photoshop class="icon-svg" theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-else-if="PS.includes(data['suffix'].toUpperCase())"/>
-        <file-code-one theme="outline" :size="iconSize" fill="#f6823b" :strokeWidth="2" v-else/>
+        <file-zip class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="ZIP.includes(data['suffix'].toUpperCase())"/>
+        <audio-file class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="AUDIO.includes(data['suffix'].toUpperCase())"/>
+        <file-doc class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="DOC.includes(data['suffix'].toUpperCase())"/>
+        <file-excel class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="EXCEL.includes(data['suffix'].toUpperCase())"/>
+        <adobe-photoshop class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="PS.includes(data['suffix'].toUpperCase())"/>
+        <file-code-one theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else/>
       </div>
       <div class="file-name">
         {{data.name}}
@@ -52,6 +52,10 @@ const props = defineProps({
   columns:{
     type: Number,
     default: 3,
+  },
+  themeColor: {
+    type: String,
+    default: ""
   }
 })
 

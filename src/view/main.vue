@@ -2,21 +2,21 @@
   <div>
     <div class="top-box">
       <div class="ret" @click="returnPath">
-        <return :strokeWidth="2" class="icon-svg" fill="#f6823b" size="24" theme="outline"/>
+        <return :strokeWidth="2" class="icon-svg" :fill="themeColor" size="24" theme="outline"/>
       </div>
       <div class="top-title">
         {{ getFilePath(path, '') }}
       </div>
       <div class="mode">
-        <list-bottom @click="changeMode" v-if="model==='list'" theme="outline" size="28" fill="#f6823b" :strokeWidth="3"/>
-        <all-application @click="changeMode" v-else theme="outline" size="28" fill="#f6823b" :strokeWidth="3"/>
-        <setting-two  @click="SetString" style="float: right" theme="outline" size="28" fill="#f6823b" :strokeWidth="3"/>
+        <list-bottom @click="changeMode" v-if="model==='list'" theme="outline" size="28" :fill="themeColor" :strokeWidth="3"/>
+        <all-application @click="changeMode" v-else theme="outline" size="28" :fill="themeColor" :strokeWidth="3"/>
+        <setting-two  @click="SetString" style="float: right" theme="outline" size="28" :fill="themeColor" :strokeWidth="3"/>
       </div>
     </div>
     <div style="height: 100%;padding-top: 40px">
-      <InfoTable v-if="model==='list'" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
+      <InfoTable v-if="model==='list'" :theme-color="themeColor" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
                  @copy-url="copyUrl"></InfoTable>
-      <image-table v-else :columns="columns" :img-size="imgSize" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
+      <image-table v-else :theme-color="themeColor"  :columns="columns" :img-size="imgSize" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
                    @copy-url="copyUrl"></image-table>
     </div>
     <Transition>
@@ -59,13 +59,16 @@
     <Transition>
       <Dialog v-if="setStringShow" :btnNum="1" :title="'设置'" @ok-btn="setOk">
         <template #body>
-          <div style="padding-top: 12px;padding-bottom: 5px">
-            预览图像素：<input type="number" class="PxInput" v-model="imgSize"> px
+          <div class="set-item">
+            <span>预览图像素：</span><input type="number" class="PxInput" v-model="imgSize"> px
           </div>
-          <div style="padding-top: 12px;padding-bottom: 5px">
-            图片模式列数：<input type="number" class="PxInput" v-model="columns"> 列
+          <div class="set-item">
+            <span>图片模式列数：</span><input type="number" class="PxInput" v-model="columns"> 列
           </div>
-          <div style="padding-top: 5px;padding-bottom: 10px">
+          <div class="set-item">
+            <span>主题色：</span><pick-colors z-index="99999" width="50" v-model:value="themeColor"/>
+          </div>
+          <div class="set-item">
             <div class="close-btn" @click="clearCache">清空缓存</div>
           </div>
         </template>
@@ -81,7 +84,7 @@ import {useRoute, useRouter} from "vue-router";
 import Dialog from "@/components/Dialog.vue";
 import ImageTable from "@/components/ImageTable.vue";
 import InfoTable from "@/components/InfoTable.vue";
-
+import PickColors from 'vue-pick-colors'
 
 const showDialog = ref(false);
 const delDialog = ref(false);
@@ -120,7 +123,7 @@ const tableHeader = ref([
     bgColor: "green",
   },
 ])
-
+const themeColor = ref("#f6823b")
 
 const returnPath = () => {
   if(imgShow.value || showDialog.value || delDialog.value || setStringShow.value){
@@ -347,6 +350,7 @@ const setOk = ()=>{
   setStringShow.value = false;
   localStorage.setItem("imgSize",String(imgSize.value))
   localStorage.setItem("columns",String(columns.value))
+  localStorage.setItem("themeColor",String(themeColor.value))
 }
 
 const clearCache = ()=>{
@@ -357,6 +361,7 @@ const clearCache = ()=>{
 onMounted(() => {
   imgSize.value = Number(localStorage.getItem("imgSize") || 500);
   columns.value = Number(localStorage.getItem("columns") || 3);
+  themeColor.value = localStorage.getItem("themeColor") || "#f6823b";
   model.value = localStorage.getItem("model") || "list";
   let pathValue = localStorage.getItem("path");
   if (pathValue) {
@@ -518,6 +523,15 @@ watch(path, (newName, oldName) => {
 .PxInput{
   width: 40px;
   padding: 2px;
+}
+
+.set-item {
+  padding-top: 12px;
+  padding-bottom: 5px;
+  display: flex;
+  span{
+    align-self:center;
+  }
 }
 
 </style>
