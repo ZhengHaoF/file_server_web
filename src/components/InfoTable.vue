@@ -31,10 +31,10 @@
                     </div>
                     <div v-else-if="head.prop === 'cz'" v-if="data.isFile" class="file-name" style="display: flex;text-align: center">
                         <div style="flex: 1">
-                          <button @click="copyUrl(index)">分享</button>
+                          <button @click="copyUrl(index)" :style="{borderColor:themeColor}">分享</button>
                         </div>
                         <div style="flex: 1">
-                          <button @click="delFile(index)">删除</button>
+                          <button @click="delFile(index)" :style="{borderColor:themeColor}">删除</button>
                         </div>
                     </div>
                     <div v-else class="file-name">{{ data[head.prop] }}</div>
@@ -192,6 +192,13 @@ table {
 
   .file-text {
 
+  }
+  button{
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 2px;
+    color: #333;
   }
 }
 </style>

@@ -40,9 +40,9 @@
       <Dialog v-if="showDialog" :ok-btn-text="'返回'" :title="'预览方式'" @ok-btn="okBtn">
         <template #body>
           <ul class="play-list">
-            <li @click="playVideo('web')">网页播放</li>
+            <li @click="playVideo('web')">Dplayer播放</li>
             <li @click="playVideo('vlc')">Vlc播放</li>
-            <li @click="playVideo('html')">原生播放器</li>
+            <li @click="playVideo('html')">网页播放器</li>
           </ul>
         </template>
       </Dialog>
