@@ -1,24 +1,31 @@
 <template>
-  <div id="dplayer" style="width: 100%;height: 100vh"></div>
+  <div id="mui-player" style="width: 100%;height: 100vh"></div>
 </template>
 <script setup>
-import DPlayer from 'dplayer';
-import {onBeforeUnmount, onMounted, ref} from "vue";
+import 'mui-player/dist/mui-player.min.css'
+import MuiPlayer from 'mui-player'
+import {onBeforeUnmount, onMounted} from "vue";
 import {useRoute} from "vue-router";
+import router from "@/router";
+
 const route = useRoute()
-let dp;
-onMounted(()=>{
-    let url = route.query.url;
-     dp = new DPlayer({
-        container: document.getElementById('dplayer'),
-        video: {
-            url: url,
-            type:"auto"
-        },
-    });
+let mp;
+onMounted(() => {
+  let url = route.query.url;
+  // 初始化 MuiPlayer 插件，MuiPlayer 方法传递一个对象，该对象包括所有插件的配置
+  mp = new MuiPlayer({
+    container: '#mui-player',
+    title: url,
+    initFullFixed: true,
+    src: url,
+  })
+  // 监听播放器已创建完成
+  mp.on('back', (e) => {
+    router.back();
+  });
 })
-onBeforeUnmount(()=>{
-    dp.destroy();
+onBeforeUnmount(() => {
+  mp.destroy();
 })
 
 </script>

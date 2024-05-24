@@ -10,7 +10,9 @@
   "dependencies": {
     "@icon-park/vue-next": "^1.4.2",
     "axios": "^1.4.0",
-    "dplayer": "^1.27.1",
+    "flv.js": "^1.6.2",
+    "hls.js": "^1.5.8",
+    "mui-player": "^1.8.1",
     "sass": "^1.64.0",
     "vue": "^3.3.4",
     "vue-pick-colors": "^1.6.5",
