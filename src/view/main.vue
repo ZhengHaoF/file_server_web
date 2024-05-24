@@ -238,21 +238,23 @@ const playVideo = (t) => {
   showDialog.value = false;
   nextTick(() => {
     if (t === 'web') {
-      router.push({
+      let href = router.resolve({
         path: "/VideoPlay",
         query: {
           url: playUrl.value,
         }
       })
+      window.open(href.href)
     } else if (t === 'vlc') {
       window.open('vlc://' + playUrl.value)
     }else{
-      router.push({
+      let href = router.resolve({
         path: "/HtmlVideoPlay",
         query: {
           url: playUrl.value,
         }
       })
+      window.open(href.href)
     }
   })
 }
