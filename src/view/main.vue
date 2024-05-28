@@ -69,6 +69,15 @@
             <span>主题色：</span><pick-colors z-index="99999" width="50" v-model:value="themeColor"/>
           </div>
           <div class="set-item">
+            <span>视屏打开方式：</span>
+            <select class="select-input" v-model="playMode">
+              <option value="ask">每次询问</option>
+              <option value="web">MuiPlayer播放</option>
+              <option value="vlc">Vlc播放</option>
+              <option value="html">网页播放器</option>
+            </select>
+          </div>
+          <div class="set-item">
             <div class="close-btn" @click="clearCache">清空缓存</div>
           </div>
         </template>
@@ -273,7 +282,12 @@ const clickFile = (index) => {
     if (VIDEO.includes(fileSuffix.toUpperCase())) {
       //视频
       playUrl.value = getFileUrl(path.value, fileInfo.name)
-      showDialog.value = true;
+      if(playMode.value === 'ask'){
+        //视屏播放是否询问
+        showDialog.value = true;
+      }else{
+        playVideo(playMode.value)
+      }
     } else if (IMG.includes(fileSuffix.toUpperCase())) {
       //图片
       imgUrls.value = [];
@@ -348,9 +362,11 @@ const SetString = ()=>{
   setStringShow.value = true;
 }
 
+const playMode = ref("ask")
 const setOk = ()=>{
   setStringShow.value = false;
   localStorage.setItem("imgSize",String(imgSize.value))
+  localStorage.setItem("playMode",String(playMode.value))
   localStorage.setItem("columns",String(columns.value))
   localStorage.setItem("themeColor",String(themeColor.value))
 }
@@ -363,6 +379,7 @@ const clearCache = ()=>{
 onMounted(() => {
   imgSize.value = Number(localStorage.getItem("imgSize") || 500);
   columns.value = Number(localStorage.getItem("columns") || 3);
+  playMode.value = localStorage.getItem("playMode") || "ask"
   themeColor.value = localStorage.getItem("themeColor") || "#f6823b";
   model.value = localStorage.getItem("model") || "list";
   let pathValue = localStorage.getItem("path");
@@ -524,6 +541,9 @@ watch(path, (newName, oldName) => {
 
 .PxInput{
   width: 40px;
+  padding: 2px;
+}
+.select-input{
   padding: 2px;
 }
 
