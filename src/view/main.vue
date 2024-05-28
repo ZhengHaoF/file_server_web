@@ -94,6 +94,7 @@ import Dialog from "@/components/Dialog.vue";
 import ImageTable from "@/components/ImageTable.vue";
 import InfoTable from "@/components/InfoTable.vue";
 import PickColors from 'vue-pick-colors'
+import {getScroll, setScroll, throttle} from "@/tools/tools";
 
 const showDialog = ref(false);
 const delDialog = ref(false);
@@ -185,7 +186,7 @@ const getFileUrl = (filePath, fileName) => {
     filePath = filePath.replace(/\$/g, "")
   }
   filePath = filePath.replace(/__/g, "/")
-  console.log(`获取文件：${local}/getFile${filePath}/${fileName}`)
+  // console.log(`获取文件：${local}/getFile${filePath}/${fileName}`)
   return `${local}/getFile${filePath}/${fileName}`;
 }
 
@@ -333,6 +334,10 @@ const getFileList = () => {
         }
         return item;
       })
+      nextTick(()=>{
+        // console.log(getScroll(path.value),"读取的位置")
+        scrollTo({top: getScroll(path.value)})
+      })
     }
   })
 }
@@ -388,6 +393,12 @@ onMounted(() => {
   }
   addHistory();
   getFileList();
+
+  function scr() {
+    setScroll(path.value,Math.floor(window.scrollY))
+    // console.log(Math.floor(window.scrollY),"存储的位置")
+  }
+  window.addEventListener('scroll',throttle(scr, 200));
 })
 
 onUnmounted(() => {
