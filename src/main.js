@@ -14,5 +14,13 @@ app.use(VueLazyLoad, {
     loading: loading,
     attempt: 2,
 })
+import vuEPG, { useVuEPG } from "vuepg";
+
+const epg = useVuEPG();
+epg.setConfig({
+    debug: true,
+});
+
+app.use(vuEPG);
 app.mount('#app')
 

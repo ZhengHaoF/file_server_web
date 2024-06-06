@@ -9,7 +9,7 @@
       </div>
       <div class="footer">
         <div class="close-btn" v-if="props.btnNum > 1" @click="closeBtn">关闭</div>
-        <div class="ok-btn" @click="okBtn">{{props.okBtnText}}</div>
+        <div class="ok-btn" @click="okBtn" v-epg-item>{{props.okBtnText}}</div>
       </div>
     </div>
   </div>

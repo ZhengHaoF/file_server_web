@@ -1,6 +1,6 @@
 <template>
-  <div class="box">
-    <div v-for="(data,index) in showTableData" :key="index" class="item" :style="{width:`calc(100%/${columns})`}" @click="clickFile(index)">
+  <div class="box" v-epg-group>
+    <div v-epg-item v-for="(data,index) in showTableData" :key="index" class="item" :style="{width:`calc(100%/${columns})`}" @click="clickFile(index)">
       <div class="icon">
         <seo-folder class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor" :strokeWidth="2" v-if="data['isDirectory']"/>
         <video-two class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="VIDEO.includes(data['suffix'].toUpperCase())"/>

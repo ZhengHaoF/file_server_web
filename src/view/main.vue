@@ -1,16 +1,16 @@
 <template>
-  <div>
+  <div v-epg-group>
     <div class="top-box">
-      <div class="ret" @click="returnPath">
+      <div class="ret" @click="returnPath" v-epg-item>
         <return :strokeWidth="2" class="icon-svg" :fill="themeColor" size="24" theme="outline"/>
       </div>
       <div class="top-title">
         {{ getFilePath(path, '') }}
       </div>
       <div class="mode">
-        <list-bottom @click="changeMode" v-if="model==='list'" theme="outline" size="28" :fill="themeColor" :strokeWidth="3"/>
-        <all-application @click="changeMode" v-else theme="outline" size="28" :fill="themeColor" :strokeWidth="3"/>
-        <setting-two  @click="SetString" style="float: right" theme="outline" size="28" :fill="themeColor" :strokeWidth="3"/>
+        <list-bottom v-epg-item @click="changeMode" v-if="model==='list'" theme="outline" size="28" :fill="themeColor" :strokeWidth="3"/>
+        <all-application v-epg-item @click="changeMode" v-else theme="outline" size="28" :fill="themeColor" :strokeWidth="3"/>
+        <setting-two v-epg-item @click="SetString" style="float: right" theme="outline" size="28" :fill="themeColor" :strokeWidth="3"/>
       </div>
     </div>
     <div style="height: 100%;padding-top: 40px">
@@ -22,7 +22,7 @@
     <Transition>
       <div v-if="imgShow" class="imgBox">
         <div class="close-icon" @click="headImg">
-          <close :strokeWidth="5" fill="#ffffff" size="30" theme="outline"/>
+          <close  :strokeWidth="5" fill="#ffffff" size="30" theme="outline"/>
         </div>
         <div class="img">
           <div class="left-btn" @click="preImg">
@@ -37,12 +37,12 @@
       </div>
     </Transition>
     <Transition>
-      <Dialog v-if="showDialog" :ok-btn-text="'返回'" :title="'预览方式'" @ok-btn="okBtn">
+      <Dialog v-if="showDialog" :ok-btn-text="'返回'" :title="'预览方式'" @ok-btn="okBtn" v-epg-group>
         <template #body>
           <ul class="play-list">
-            <li @click="playVideo('web')">MuiPlayer播放</li>
-            <li @click="playVideo('vlc')">Vlc播放</li>
-            <li @click="playVideo('html')">网页播放器</li>
+            <li @click="playVideo('web')" v-epg-item ref="previewMethod">MuiPlayer播放</li>
+            <li @click="playVideo('vlc')" v-epg-item>Vlc播放</li>
+            <li @click="playVideo('html')" v-epg-item>网页播放器</li>
           </ul>
         </template>
       </Dialog>
@@ -57,20 +57,20 @@
       </Dialog>
     </Transition>
     <Transition>
-      <Dialog v-if="setStringShow" :btnNum="1" :title="'设置'" @ok-btn="setOk">
+      <Dialog v-if="setStringShow" :btnNum="1" :title="'设置'" v-epg-group @ok-btn="setOk">
         <template #body>
           <div class="set-item">
-            <span>预览图像素：</span><input type="number" class="PxInput" v-model="imgSize"> px
+            <span>预览图像素：</span><input type="number" ref="imgPx" v-epg-item class="PxInput" v-model="imgSize"> px
           </div>
           <div class="set-item">
-            <span>图片模式列数：</span><input type="number" class="PxInput" v-model="columns"> 列
+            <span>图片模式列数：</span><input type="number" v-epg-item class="PxInput" v-model="columns"> 列
           </div>
           <div class="set-item">
-            <span>主题色：</span><pick-colors z-index="99999" width="50" v-model:value="themeColor"/>
+            <span>主题色：</span><pick-colors z-index="99999" v-epg-item width="50" v-model:value="themeColor"/>
           </div>
           <div class="set-item">
             <span>视屏打开方式：</span>
-            <select class="select-input" v-model="playMode">
+            <select class="select-input" v-model="playMode" v-epg-item>
               <option value="ask">每次询问</option>
               <option value="web">MuiPlayer播放</option>
               <option value="vlc">Vlc播放</option>
@@ -78,7 +78,7 @@
             </select>
           </div>
           <div class="set-item">
-            <div class="close-btn" @click="clearCache">清空缓存</div>
+            <div class="close-btn" @click="clearCache" v-epg-item>清空缓存</div>
           </div>
         </template>
       </Dialog>
@@ -95,7 +95,8 @@ import ImageTable from "@/components/ImageTable.vue";
 import InfoTable from "@/components/InfoTable.vue";
 import PickColors from 'vue-pick-colors'
 import {getScroll, setScroll, throttle} from "@/tools/tools";
-
+import { useVuEPG } from "vuepg";
+const epg = useVuEPG();
 const showDialog = ref(false);
 const delDialog = ref(false);
 const router = useRouter()
@@ -124,17 +125,11 @@ const tableHeader = ref([
     prop: "size",
     textColor: "red",
     bgColor: "red",
-  },
-  {
-    span: "操作",
-    prop: "cz",
-    width: "80px",
-    textColor: "green",
-    bgColor: "green",
-  },
+  }
 ])
 const themeColor = ref("#f6823b")
-
+//预览方式
+const previewMethod = ref();
 const returnPath = () => {
   if(imgShow.value || showDialog.value || delDialog.value || setStringShow.value){
     imgShow.value = false;
@@ -223,6 +218,7 @@ const AUDIO = [".WAV", ".MP3", ".OGG"];
 const DOC = [".DOC", ".DOCX"];
 const EXCEL = [".XLS", ".XLSX"];
 
+
 const okBtn = () => {
   showDialog.value = false;
 }
@@ -286,6 +282,10 @@ const clickFile = (index) => {
       if(playMode.value === 'ask'){
         //视屏播放是否询问
         showDialog.value = true;
+        console.log(888)
+        nextTick(()=>{
+          epg.move(previewMethod.value)
+        })
       }else{
         playVideo(playMode.value)
       }
@@ -363,8 +363,22 @@ const changeMode = () => {
 }
 
 const setStringShow = ref(false)
+const imgPx = ref()
 const SetString = ()=>{
   setStringShow.value = true;
+  nextTick(()=>{
+    epg.move(imgPx.value)
+
+    try {
+      let dom = document.getElementsByClassName("vuepg-focus")[0];
+      if(dom.tagName === "INPUT"){
+        dom.focus()
+      }
+    }catch (e) {
+
+    }
+
+  })
 }
 
 const playMode = ref("ask")
@@ -399,6 +413,65 @@ onMounted(() => {
     // console.log(Math.floor(window.scrollY),"存储的位置")
   }
   window.addEventListener('scroll',throttle(scr, 200));
+
+  epg.setActionCallback("BACK", () => {
+    let dom = document.getElementsByClassName("vuepg-focus")[0];
+    if(imgShow.value){
+      imgShow.value = false;
+      return;
+    }
+    if(dom.tagName === "INPUT"){
+      dom.value = dom.value.slice(0,-1)
+      return;
+    }
+    returnPath();
+  });
+
+  epg.setActionCallback("LEFT", () => {
+    if(imgShow.value){
+      preImg()
+    }
+  });
+
+  epg.setActionCallback("RIGHT", () => {
+    if(imgShow.value){
+      nextImg()
+    }
+  });
+
+  epg.setActionCallback("UP", () => {
+    try {
+      let dom = document.getElementsByClassName("vuepg-focus")[0];
+      if(dom.tagName === "TR"){
+        scrollTo({top: window.scrollY - dom.offsetHeight, behavior: 'smooth'})
+      }else if(dom.tagName === "INPUT"){
+        dom.focus()
+      }else if(dom.tagName === "SELECT"){
+      }else if(dom.tagName === "DIV" && dom.className === "item vuepg-focus"){
+        scrollTo({top: window.scrollY + dom.offsetHeight, behavior: 'smooth'})
+      }
+    }catch (e){
+      
+    }
+
+  });
+
+  epg.setActionCallback("DOWN", () => {
+    try {
+      let dom = document.getElementsByClassName("vuepg-focus")[0];
+      console.log(dom.tagName)
+      if(dom.tagName === "TR"){
+        scrollTo({top: window.scrollY + dom.offsetHeight, behavior: 'smooth'})
+      }else if(dom.tagName === "INPUT"){
+        dom.focus()
+      }else if(dom.tagName === "SELECT"){
+      }else if(dom.tagName === "DIV" && dom.className === "item vuepg-focus"){
+        scrollTo({top: window.scrollY + dom.offsetHeight, behavior: 'smooth'})
+      }
+    }catch (e) {
+
+    }
+  });
 })
 
 onUnmounted(() => {

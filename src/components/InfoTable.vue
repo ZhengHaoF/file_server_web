@@ -1,6 +1,6 @@
 <template>
     <div class="box">
-        <table>
+        <table v-epg-group>
             <tr style="background-color: #f6f6f6">
                 <th v-for="item in tableHead"
                     :class="{'bgRed':item.bgColor==='red','bgGreen':item.bgColor==='green','textRed':item.textColor==='red','textGreen':item.textColor==='green'} "
@@ -10,10 +10,10 @@
                 </th>
             </tr>
 
-            <tr v-for="(data,index) in showTableData">
+            <tr v-for="(data,index) in showTableData" v-epg-item @click="clickFile(index)">
                 <td v-for="(head) in tableHead"
                     :class="{'textRed':head['textColor']==='red','textGreen':head['textColor']==='green'} ">
-                    <div v-if="head.prop === 'name'" class="file-name" @click="clickFile(index)">
+                    <div v-if="head.prop === 'name'" class="file-name">
                       <div class="file-logo">
                         <seo-folder class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-if="data['isDirectory']"/>
                         <video-two class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="VIDEO.includes(data['suffix'].toUpperCase())"/>
@@ -28,14 +28,6 @@
                       <div class="file-text">
                         {{ data[head.prop]}}
                       </div>
-                    </div>
-                    <div v-else-if="head.prop === 'cz'" v-if="data.isFile" class="file-name" style="display: flex;text-align: center">
-                        <div style="flex: 1">
-                          <button @click="copyUrl(index)" :style="{borderColor:themeColor}">分享</button>
-                        </div>
-                        <div style="flex: 1">
-                          <button @click="delFile(index)" :style="{borderColor:themeColor}">删除</button>
-                        </div>
                     </div>
                     <div v-else class="file-name">{{ data[head.prop] }}</div>
                 </td>
@@ -201,4 +193,5 @@ table {
     color: #333;
   }
 }
+
 </style>

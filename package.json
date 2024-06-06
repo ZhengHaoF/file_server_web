@@ -16,7 +16,8 @@
     "sass": "^1.64.0",
     "vue": "^3.3.4",
     "vue-pick-colors": "^1.6.5",
-    "vue-router": "^4.2.4"
+    "vue-router": "^4.2.4",
+    "vuepg": "^1.2.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
