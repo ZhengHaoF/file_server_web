@@ -38,3 +38,7 @@ export const setScroll = (path,scroll) => {
 export const getScroll = (path) => {
     return sessionStorage.getItem(path) || 0;
 }
+
+export function sum(a, b) {
+    return a + b
+}
