@@ -69,7 +69,6 @@ const props = defineProps({
 
 onMounted(() => {
   showTableData.value = props.tableData.slice(0, props.showMax);
-  console.log(showTableData.value,888);
 })
 const getShowTableData = computed(() => {
   let list = [];
