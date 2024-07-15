@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <div v-for="(data,index) in showTableData" :key="index" class="item" :style="{width:`calc(100%/${columns})`}" @click="clickFile(index)">
+    <div v-for="(data,index) in getShowTableData" :key="index" class="item" :style="{width:`calc(100%/${columns})`}" @click="clickFile(data.index)">
       <div class="icon">
         <seo-folder class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor" :strokeWidth="2" v-if="data['isDirectory']"/>
         <video-two class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="VIDEO.includes(data['suffix'].toUpperCase())"/>
@@ -22,7 +22,7 @@
   </div>
 </template>
 <script setup>
-import {onMounted, ref, watch} from "vue";
+import {computed, onMounted, ref, watch} from "vue";
 import {VideoTwo,FileZip,SeoFolder,AudioFile,FileDoc,FileExcel,AdobePhotoshop,FileCodeOne} from '@icon-park/vue-next';
 const show = ref(false);
 const showTableData = ref([]);
@@ -56,6 +56,10 @@ const props = defineProps({
   themeColor: {
     type: String,
     default: ""
+  },
+  onlyShowImages: {
+    type: true,
+    default: false
   }
 })
 
@@ -65,8 +69,20 @@ const props = defineProps({
 
 onMounted(() => {
   showTableData.value = props.tableData.slice(0, props.showMax);
+  console.log(showTableData.value,888);
 })
-
+const getShowTableData = computed(() => {
+  let list = [];
+  showTableData.value.forEach((item,index) => {
+    if (IMG.includes(item['suffix'].toUpperCase()) || item['isDirectory']){
+      list.push({
+        ...item,
+        "index":index //index保持不变
+      })
+    }
+  })
+  return list;
+})
 const clickFile = (index) => {
   emit("clickFile", index)
 }

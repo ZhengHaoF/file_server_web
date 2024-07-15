@@ -16,7 +16,7 @@
     <div style="height: 100%;padding-top: 40px">
       <InfoTable v-if="model==='list'" :theme-color="themeColor" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
                  @copy-url="copyUrl"></InfoTable>
-      <image-table v-else :theme-color="themeColor"  :columns="columns" :img-size="imgSize" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
+      <image-table v-else :theme-color="themeColor" :onlyShowImages="onlyShowImages" :columns="columns" :img-size="imgSize" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
                    @copy-url="copyUrl"></image-table>
     </div>
     <Transition>
@@ -76,6 +76,9 @@
               <option value="vlc">Vlc播放</option>
               <option value="html">网页播放器</option>
             </select>
+          </div>
+          <div class="set-item">
+            <span>图片模式只显示图片：</span><input type="checkbox" v-model="onlyShowImages">
           </div>
           <div class="set-item">
             <div class="close-btn" @click="clearCache">清空缓存</div>
@@ -387,10 +390,21 @@ const clearCache = ()=>{
   location.reload();
 }
 
+const onlyShowImages = ref(false);
+watch(onlyShowImages, (newName, oldName) => {
+  localStorage.setItem("onlyShowImages", String(newName));
+});
 onMounted(() => {
+  //预览图片大小
   imgSize.value = Number(localStorage.getItem("imgSize") || 500);
+  //图片模式查看列数
   columns.value = Number(localStorage.getItem("columns") || 3);
-  playMode.value = localStorage.getItem("playMode") || "ask"
+  //默认播放方式
+  playMode.value = localStorage.getItem("playMode") || "ask";
+  //图片模式下只显示图片和文件夹
+  onlyShowImages.value = localStorage.getItem("onlyShowImages") === 'true';
+  console.log(onlyShowImages.value)
+  //主题色
   themeColor.value = localStorage.getItem("themeColor") || "#f6823b";
   model.value = localStorage.getItem("model") || "list";
   let pathValue = localStorage.getItem("path");
