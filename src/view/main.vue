@@ -339,6 +339,12 @@ const getFileList = () => {
         scrollTo({top: getScroll(path.value)})
       })
     }
+  }).catch((err)=>{
+    if(err.response.status === 404){
+      console.log(err.response.data);
+      localStorage.setItem("path","$");
+      location.reload();
+    }
   })
 }
 const backChange = () => {
@@ -431,11 +437,9 @@ watch(path, (newName, oldName) => {
   .top-title {
     flex: 6;
     overflow: hidden;
+    white-space: nowrap;
     text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 1; /* 限制在一个块元素显示的文本的行数 */
-    -webkit-box-orient: vertical; /* 垂直排列 */
-    word-break: break-all; /* 内容自动换行 */
+    -o-text-overflow:ellipsis;
   }
 
   .mode {
