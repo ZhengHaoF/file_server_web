@@ -4,7 +4,7 @@
       <div class="icon">
         <seo-folder class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor" :strokeWidth="2" v-if="data['isDirectory']"/>
         <video-two class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="VIDEO.includes(data['suffix'].toUpperCase())"/>
-        <img class="icon-svg" v-lazy="data.url + `!${imgSize}x${imgSize}`" style="object-fit: cover;width: 100%;height: 100%;aspect-ratio:1/1" v-else-if="IMG.includes(data['suffix'].toUpperCase())" alt="data.name" src=""/>
+        <img class="icon-svg imgLazy" v-lazy="data.url + `!${imgSize}x${imgSize}`" style="object-fit: cover;width: 100%;height: 100%;aspect-ratio:1/1" v-else-if="IMG.includes(data['suffix'].toUpperCase())" alt="data.name" src=""/>
         <file-zip class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="ZIP.includes(data['suffix'].toUpperCase())"/>
         <audio-file class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="AUDIO.includes(data['suffix'].toUpperCase())"/>
         <file-doc class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="DOC.includes(data['suffix'].toUpperCase())"/>
@@ -138,6 +138,9 @@ watch(() => props.tableData, () => {
     -webkit-line-clamp: 1; /* 限制在一个块元素显示的文本的行数 */
     -webkit-box-orient: vertical; /* 垂直排列 */
     word-break: break-all;  /* 内容自动换行 */
+  }
+  .imgLazy[lazy='loading']{
+    animation: turn 5s linear infinite;
   }
 }
 
