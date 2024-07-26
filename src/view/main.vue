@@ -86,6 +86,14 @@
         </template>
       </Dialog>
     </Transition>
+    <Transition>
+      <div class="loading" v-if="showLoading">
+        <div style="position: relative;width: 100%;height: 100%">
+          <img class="turn" :src="loadingImg" alt="">
+          <div  class="text">加载中···</div>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 <script setup>
@@ -137,6 +145,11 @@ const tableHeader = ref([
   },
 ])
 const themeColor = ref("#f6823b")
+
+//加载框使用的图片
+import loadingImg from "../assets/loading.png"
+//显示加载框
+const showLoading = ref(false);
 
 const returnPath = () => {
   if(imgShow.value || showDialog.value || delDialog.value || setStringShow.value){
@@ -326,9 +339,16 @@ const clickFile = (index) => {
   }
 }
 const getFileList = () => {
+  showLoading.value = true;
   axios.get(`${local}/list/${path.value}`).then((res, err) => {
+    showLoading.value = false;
     if (res.status === 200) {
-      tableData.value = res.data.map((item) => {
+      let data = res?.data?.list;
+      if(!data){
+        console.log("格式不匹配")
+        return;
+      }
+      tableData.value = data.map((item) => {
         item['size'] = (Number(item['size']) / 1024 / 1024).toFixed(2) + "MB";
         if (item['isDirectory']) {
           item['size'] = "";
@@ -343,6 +363,7 @@ const getFileList = () => {
       })
     }
   }).catch((err)=>{
+    showLoading.value = false;
     if(err.response.status === 404){
       console.log(err.response.data);
       localStorage.setItem("path","$");
@@ -583,6 +604,71 @@ watch(path, (newName, oldName) => {
   span{
     align-self:center;
   }
+}
+.loading{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150px;
+  height: 150px;
+  background-color: rgba(0,0,0,0.6);
+  border-radius: 20px;
+  color: white;
+  text-align: center;
+  img{
+    position: absolute;
+    top: 20px;
+    left: 30px;
+  }
+  .text{
+    position: absolute;
+    bottom: 10px;
+    text-align: center;
+    width: 100%;
+    height: 20px;
+    color: white;
+  }
+  /* 旋转动画 指定class为trun即可使用*/
+  .turn {
+    animation: turn 5s linear infinite;
+  }
+
+  /*
+  turn : 定义的动画名称
+  10s : 动画时间
+  linear : 动画平滑
+  infinite :使动画无限循环
+  transform:rotate(旋转角度)
+  %0:动画开始
+  %100:动画结束
+  */
+  @keyframes turn {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    20% {
+      transform: rotate(72deg);
+    }
+
+    40% {
+      transform: rotate(144deg);
+    }
+
+    60% {
+      transform: rotate(216deg);
+    }
+
+    80% {
+      transform: rotate(288deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
 }
 
 </style>
