@@ -41,7 +41,7 @@
                 </td>
             </tr>
 
-            <tr><td style="text-align: center;color: #999" colspan="3">到底了···</td></tr>
+            <tr v-if="tableData.length !== 0"><td style="text-align: center;color: #999" colspan="3">到底了···</td></tr>
         </table>
         <div v-if="tableData.length === 0" style="height: 6rem;text-align: center;line-height: 6rem">
             当前数据为空
@@ -135,7 +135,7 @@ watch(() => props.tableData, () => {
 
 <style lang="scss" scoped>
 .box {
-  height: calc(100vh - 30px);
+  height: calc(100vh - 40px);
   overflow-y: scroll;
 }
 

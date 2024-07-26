@@ -16,6 +16,7 @@
         {{data.name}}
       </div>
     </div>
+    <div v-if="tableData.length !== 0" style="text-align: center;color: #999;line-height: 30px">到底了···</div>
     <div v-if="tableData.length === 0" style="height: 6rem;text-align: center;line-height: 6rem">
       当前数据为空
     </div>
@@ -115,15 +116,15 @@ watch(() => props.tableData, () => {
 
 <style lang="scss" scoped>
 .box {
-  height: calc(100vh - 30px);
+  height: calc(100vh - 40px);
   overflow-y: scroll;
-  display: flex;
-  flex-wrap: wrap;
 }
 
 .item{
   text-align: center;
   font-size: 14px;
+  float: left;
+
   .icon{
     padding: 10px;
     display: flex;
