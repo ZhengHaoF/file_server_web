@@ -115,7 +115,7 @@ watch(() => props.tableData, () => {
 
 <style lang="scss" scoped>
 .box {
-  height: 100%;
+  height: calc(100vh - 30px);
   overflow-y: scroll;
   display: flex;
   flex-wrap: wrap;

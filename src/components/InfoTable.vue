@@ -1,6 +1,6 @@
 <template>
-    <div class="box">
-        <table>
+    <div class="box" ref="box">
+      <table>
             <tr style="background-color: #f6f6f6">
                 <th v-for="item in tableHead"
                     :class="{'bgRed':item.bgColor==='red','bgGreen':item.bgColor==='green','textRed':item.textColor==='red','textGreen':item.textColor==='green'} "
@@ -40,6 +40,8 @@
                     <div v-else class="file-name">{{ data[head.prop] }}</div>
                 </td>
             </tr>
+
+            <tr><td style="text-align: center;color: #999" colspan="3">到底了···</td></tr>
         </table>
         <div v-if="tableData.length === 0" style="height: 6rem;text-align: center;line-height: 6rem">
             当前数据为空
@@ -52,6 +54,20 @@
 <script setup>
 import {onMounted, ref, watch} from "vue";
 import {VideoTwo,ImageFiles,FileZip,SeoFolder,AudioFile,FileDoc,FileExcel,AdobePhotoshop,FileCodeOne} from '@icon-park/vue-next';
+
+/*
+滚动到底监听
+import { useScroll } from '@vueuse/core'
+const box = ref(null)
+const { x, y, isScrolling, arrivedState, directions} = useScroll(box)
+//滚动监听
+watch(y,(n,o)=>{
+  //是否滚动到底部
+  if(arrivedState.bottom){
+    console.log("滚动到底部了")
+  }
+})
+ */
 const show = ref(false);
 const showTableData = ref([]);
 const emit = defineEmits(['clickFile','copyUrl','delFile'])
@@ -84,6 +100,7 @@ const props = defineProps({
 onMounted(() => {
     showTableData.value = props.tableData.slice(0, props.showMax);
 })
+
 
 const clickFile = (index) => {
     emit("clickFile", index)
@@ -118,7 +135,7 @@ watch(() => props.tableData, () => {
 
 <style lang="scss" scoped>
 .box {
-  height: 100%;
+  height: calc(100vh - 30px);
   overflow-y: scroll;
 }
 
