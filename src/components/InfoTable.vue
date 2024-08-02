@@ -43,9 +43,9 @@
 
             <tr v-if="tableData.length !== 0"><td style="text-align: center;color: #999" colspan="3">到底了···</td></tr>
         </table>
-        <div v-if="tableData.length === 0" style="height: 6rem;text-align: center;line-height: 6rem">
-            当前数据为空
-        </div>
+      <div v-if="tableData.length === 0" style="text-align: center;position: absolute;width: 100vw;height: 100vh;top: 0;left: 0;line-height: 100vh">
+        当前数据为空
+      </div>
 <!--        <div v-show="showMax && tableData.length > showMax" class="show-all" @click="changeShow">-->
 <!--            <div style="text-align: center;width: 100%">{{ show ? '收起' : '展开' }}</div>-->
 <!--        </div>-->

@@ -1,23 +1,41 @@
 <template>
   <div class="box">
-    <div v-for="(data,index) in getShowTableData" :key="index" class="item" :style="{width:`calc(100%/${columns})`}" @click="clickFile(data.index)">
-      <div class="icon">
-        <seo-folder class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor" :strokeWidth="2" v-if="data['isDirectory']"/>
-        <video-two class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="VIDEO.includes(data['suffix'].toUpperCase())"/>
-        <img class="icon-svg imgLazy" v-lazy="data.url + `!${imgSize}x${imgSize}`" style="object-fit: cover;width: 100%;height: 100%;aspect-ratio:1/1" v-else-if="IMG.includes(data['suffix'].toUpperCase())" alt="data.name" src=""/>
-        <file-zip class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="ZIP.includes(data['suffix'].toUpperCase())"/>
-        <audio-file class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="AUDIO.includes(data['suffix'].toUpperCase())"/>
-        <file-doc class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="DOC.includes(data['suffix'].toUpperCase())"/>
-        <file-excel class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="EXCEL.includes(data['suffix'].toUpperCase())"/>
-        <adobe-photoshop class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="PS.includes(data['suffix'].toUpperCase())"/>
-        <file-code-one theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else/>
-      </div>
-      <div class="file-name">
-        {{data.name}}
-      </div>
-    </div>
-    <div v-if="tableData.length !== 0" style="text-align: center;color: #999;line-height: 30px">到底了···</div>
-    <div v-if="tableData.length === 0" style="height: 6rem;text-align: center;line-height: 6rem">
+    <DynamicScroller
+        ref="scroller"
+        :emitUpdate="true"
+        :items="getShowTableData"
+        :min-item-size="10"
+        :style="{height: (scrollHeight - 40 - 30) + 'px'}"
+        class="virtual-list"
+        key-field="index"
+        :key="key"
+    >
+      <template v-slot="{ item, itemIndex, active  }">
+        <DynamicScrollerItem
+            :active="active"
+            :data-index="itemIndex"
+            :item="item"
+        >
+          <div :key="index" v-for="(data,index) in item.childList" class="item" :style="{width:`calc(100%/${columns})`}" @click="clickFile(data.index)">
+            <div class="icon">
+              <seo-folder class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor" :strokeWidth="2" v-if="data['isDirectory']"/>
+              <video-two class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="VIDEO.includes(data['suffix'].toUpperCase())"/>
+              <img class="icon-svg imgLazy" v-lazy="data.url + `!${imgSize}x${imgSize}`" style="object-fit: cover;width: 100%;height: 100%;aspect-ratio:1/1" v-else-if="IMG.includes(data['suffix'].toUpperCase())" alt="data.name" src=""/>
+              <file-zip class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="ZIP.includes(data['suffix'].toUpperCase())"/>
+              <audio-file class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="AUDIO.includes(data['suffix'].toUpperCase())"/>
+              <file-doc class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="DOC.includes(data['suffix'].toUpperCase())"/>
+              <file-excel class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="EXCEL.includes(data['suffix'].toUpperCase())"/>
+              <adobe-photoshop class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="PS.includes(data['suffix'].toUpperCase())"/>
+              <file-code-one theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else/>
+            </div>
+            <div class="file-name">
+              {{data.name}}
+            </div>
+          </div>
+        </DynamicScrollerItem>
+      </template>
+    </DynamicScroller>
+    <div v-if="getShowTableData.length === 0" style="text-align: center;position: absolute;width: 100vw;height: 100vh;top: 0;left: 0;line-height: 100vh">
       当前数据为空
     </div>
   </div>
@@ -64,12 +82,15 @@ const props = defineProps({
   }
 })
 
+const key = ref(0);
 
-
-
-
+const scrollHeight = ref(0);
+const scrollWidth = ref(0);
 onMounted(() => {
+  scrollHeight.value = document.body.offsetHeight;
+  scrollWidth.value = document.body.offsetWidth;
   showTableData.value = props.tableData.slice(0, props.showMax);
+  key.value++;
 })
 const getShowTableData = computed(() => {
   let list = [];
@@ -78,18 +99,38 @@ const getShowTableData = computed(() => {
       if (IMG.includes(item['suffix'].toUpperCase()) || item['isDirectory']){
         list.push({
           ...item,
-          "index":index //index保持不变
+          index:index
         })
       }
     }else{
       list.push({
         ...item,
-        "index":index //index保持不变
+        index:index
       })
     }
-
   })
-  return list;
+
+  //以“行数”个为一组的数组，用于虚拟列表
+  let newList = [];
+  let tempList = [];
+  list.forEach((item,index)=>{
+    if(tempList.length < props.columns - 1){
+      tempList.push({
+        ...item
+      });
+    }else{
+      tempList.push({
+        ...item
+      });
+      newList.push({
+        index:"item" + newList.length,
+        childList:tempList
+      });
+      tempList = [];
+    }
+  })
+  key.value++;
+  return newList;
 })
 const clickFile = (index) => {
   emit("clickFile", index)
@@ -149,6 +190,11 @@ watch(() => props.tableData, () => {
   }
   .imgLazy[lazy='loading']{
     animation: turn 5s linear infinite;
+  }
+
+  .virtual-list{
+    width: 100vw;
+    overflow-x: hidden;
   }
 }
 

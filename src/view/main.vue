@@ -16,7 +16,7 @@
     <div style="height: 100%;padding-top: 40px">
       <InfoTable v-if="model==='list'" :theme-color="themeColor" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
                  @copy-url="copyUrl"></InfoTable>
-      <image-table v-else :theme-color="themeColor" :onlyShowImages="onlyShowImages" :columns="columns" :img-size="imgSize" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
+      <image-table v-if="model==='img'" :theme-color="themeColor" :onlyShowImages="onlyShowImages" :columns="columns" :img-size="imgSize" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
                    @copy-url="copyUrl"></image-table>
     </div>
     <Transition>
@@ -463,7 +463,7 @@ watch(path, (newName, oldName) => {
   user-select: none;
   cursor: pointer;
   display: flex;
-
+  z-index: 99999;
   .ret {
     flex: 2;
     text-align: center;
