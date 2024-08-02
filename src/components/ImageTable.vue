@@ -74,12 +74,20 @@ onMounted(() => {
 const getShowTableData = computed(() => {
   let list = [];
   showTableData.value.forEach((item,index) => {
-    if (IMG.includes(item['suffix'].toUpperCase()) || item['isDirectory']){
+    if(props.onlyShowImages){
+      if (IMG.includes(item['suffix'].toUpperCase()) || item['isDirectory']){
+        list.push({
+          ...item,
+          "index":index //index保持不变
+        })
+      }
+    }else{
       list.push({
         ...item,
         "index":index //index保持不变
       })
     }
+
   })
   return list;
 })
