@@ -28,6 +28,12 @@
                       <div class="file-text">
                         {{ data[head.prop]}}
                       </div>
+                      <div class="file-item">
+                        {{ formatDate(data['mtime'],'{y}-{m}-{d} {h}:{i}:{s}')}}
+                      </div>
+                      <div class="file-size">
+                        {{ data['size']}}
+                      </div>
                     </div>
                     <div v-else-if="head.prop === 'cz'" v-if="data.isFile" class="file-name" style="display: flex;text-align: center">
                         <div style="flex: 1">
@@ -54,6 +60,7 @@
 <script setup>
 import {onMounted, ref, watch} from "vue";
 import {VideoTwo,ImageFiles,FileZip,SeoFolder,AudioFile,FileDoc,FileExcel,AdobePhotoshop,FileCodeOne} from '@icon-park/vue-next';
+import {formatDate} from "../../utils/utils";
 
 /*
 滚动到底监听
@@ -194,7 +201,7 @@ table {
   padding-bottom: 5px;
   word-break: break-all;
   display: flex;
-
+  flex-wrap: wrap;
   .icon-svg {
     vertical-align: middle;
   }
@@ -203,12 +210,29 @@ table {
     min-width: 40px;
     text-align: center;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     flex-direction: column;
   }
 
   .file-text {
-
+    font-size: 0.9rem;
+    flex: calc(100% - 40px);
+  }
+  .file-size{
+    flex: 50%;
+    color: #999999;
+    font-size: 0.8rem;
+    text-align: right;
+    box-sizing: border-box;
+    padding-right: 10px;
+  }
+  .file-item{
+    flex: 50%;
+    color: #999999;
+    font-size: 0.8rem;
+    box-sizing: border-box;
+    padding-left: 40px;
   }
   button{
     background-color: white;

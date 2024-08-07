@@ -130,19 +130,26 @@ const tableHeader = ref([
     textColor: "",
     bgColor: "",
   },
-  {
-    span: "大小",
-    prop: "size",
-    textColor: "red",
-    bgColor: "red",
-  },
-  {
-    span: "操作",
-    prop: "cz",
-    width: "80px",
-    textColor: "green",
-    bgColor: "green",
-  },
+  // {
+  //   span: "大小",
+  //   prop: "size",
+  //   textColor: "red",
+  //   bgColor: "red",
+  // },
+  // {
+  //   span: "操作",
+  //   prop: "cz",
+  //   width: "80px",
+  //   textColor: "green",
+  //   bgColor: "green",
+  // },
+  // {
+  //   span: "修改时间",
+  //   prop: "mtime",
+  //   width: "120px",
+  //   textColor: "green",
+  //   bgColor: "green",
+  // },
 ])
 const themeColor = ref("#FA7868")
 
