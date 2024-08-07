@@ -1,40 +1,31 @@
 <template>
   <div class="box">
-    <DynamicScroller
-        ref="scroller"
-        :emitUpdate="true"
+    <RecycleScroller
+        :item-size="Math.floor(scrollWidth/columns) + 20"
         :items="getShowTableData"
-        :min-item-size="10"
-        :style="{height: (scrollHeight - 40 - 30) + 'px'}"
         class="virtual-list"
         key-field="index"
-        :key="key"
+        style="height: 600px"
     >
-      <template v-slot="{ item, itemIndex, active  }">
-        <DynamicScrollerItem
-            :active="active"
-            :data-index="itemIndex"
-            :item="item"
-        >
-          <div :key="index" v-for="(data,index) in item.childList" class="item" :style="{width:`calc(100%/${columns})`}" @click="clickFile(data.index)">
-            <div class="icon">
-              <seo-folder class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor" :strokeWidth="2" v-if="data['isDirectory']"/>
-              <video-two class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="VIDEO.includes(data['suffix'].toUpperCase())"/>
-              <img class="icon-svg imgLazy" v-lazy="data.url + `!${imgSize}x${imgSize}`" style="object-fit: cover;width: 100%;height: 100%;aspect-ratio:1/1" v-else-if="IMG.includes(data['suffix'].toUpperCase())" alt="data.name" src=""/>
-              <file-zip class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="ZIP.includes(data['suffix'].toUpperCase())"/>
-              <audio-file class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="AUDIO.includes(data['suffix'].toUpperCase())"/>
-              <file-doc class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="DOC.includes(data['suffix'].toUpperCase())"/>
-              <file-excel class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="EXCEL.includes(data['suffix'].toUpperCase())"/>
-              <adobe-photoshop class="icon-svg" theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else-if="PS.includes(data['suffix'].toUpperCase())"/>
-              <file-code-one theme="outline" :size="iconSize" :fill="themeColor"  :strokeWidth="2" v-else/>
-            </div>
-            <div class="file-name">
-              {{data.name}}
-            </div>
+      <template v-slot="{ item }">
+        <div :key="index" v-for="(data,index) in item.childList" class="item" :style="{width:`calc(100%/${columns})`}" @click="clickFile(data.index)">
+          <div class="icon">
+            <seo-folder class="icon-svg" theme="filled" :fill="themeColor" :size="iconSize" :strokeWidth="1" v-if="data['isDirectory']"/>
+            <video-file class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="VIDEO.includes(data['suffix'].toUpperCase())"/>
+            <img class="icon-svg imgLazy" v-lazy="data.url + `!${imgSize}x${imgSize}`" style="object-fit: cover;width: 100%;height: 100%;aspect-ratio:1/1;border-radius: 10px;" v-else-if="IMG.includes(data['suffix'].toUpperCase())" alt="data.name" src=""/>
+            <file-zip class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="ZIP.includes(data['suffix'].toUpperCase())"/>
+            <audio-file class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="AUDIO.includes(data['suffix'].toUpperCase())"/>
+            <file-doc class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="DOC.includes(data['suffix'].toUpperCase())"/>
+            <file-excel class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="EXCEL.includes(data['suffix'].toUpperCase())"/>
+            <adobe-photoshop class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="PS.includes(data['suffix'].toUpperCase())"/>
+            <file-code-one theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else/>
           </div>
-        </DynamicScrollerItem>
+          <div class="file-name">
+            {{data.name}}
+          </div>
+        </div>
       </template>
-    </DynamicScroller>
+    </RecycleScroller>
     <div v-if="getShowTableData.length === 0" style="text-align: center;position: absolute;width: 100vw;height: 100vh;top: 0;left: 0;line-height: 100vh">
       当前数据为空
     </div>
@@ -42,7 +33,7 @@
 </template>
 <script setup>
 import {computed, onMounted, ref, watch} from "vue";
-import {VideoTwo,FileZip,SeoFolder,AudioFile,FileDoc,FileExcel,AdobePhotoshop,FileCodeOne} from '@icon-park/vue-next';
+import {VideoFile,FileZip,SeoFolder,AudioFile,FileDoc,FileExcel,AdobePhotoshop,FileCodeOne} from '@icon-park/vue-next';
 const show = ref(false);
 const showTableData = ref([]);
 const emit = defineEmits(['clickFile','copyUrl','delFile'])
@@ -175,7 +166,7 @@ watch(() => props.tableData, () => {
   float: left;
 
   .icon{
-    padding: 10px;
+    padding: 12px;
     display: flex;
     margin: 0 auto;
   }
@@ -192,10 +183,6 @@ watch(() => props.tableData, () => {
     animation: turn 5s linear infinite;
   }
 
-  .virtual-list{
-    width: 100vw;
-    overflow-x: hidden;
-  }
 }
 
 

@@ -144,7 +144,7 @@ const tableHeader = ref([
     bgColor: "green",
   },
 ])
-const themeColor = ref("#f6823b")
+const themeColor = ref("#FA7868")
 
 //加载框使用的图片
 import loadingImg from "../assets/loading.png"
