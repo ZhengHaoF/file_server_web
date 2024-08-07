@@ -5,7 +5,7 @@
         :items="getShowTableData"
         class="virtual-list"
         key-field="index"
-        style="height: 600px"
+        :style="{height:scrollHeight - 70 + 'px'}"
     >
       <template v-slot="{ item }">
         <div :key="index" v-for="(data,index) in item.childList" class="item" :style="{width:`calc(100%/${columns})`}" @click="clickFile(data.index)">
