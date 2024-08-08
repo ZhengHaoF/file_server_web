@@ -120,6 +120,12 @@ const getShowTableData = computed(() => {
       tempList = [];
     }
   })
+  if(tempList.length > 0){
+    newList.push({
+      index:"item" + newList.length,
+      childList:tempList
+    });
+  }
   key.value++;
   return newList;
 })
