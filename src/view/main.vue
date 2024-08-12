@@ -13,7 +13,7 @@
         <setting-two  @click="SetString" style="float: right" theme="outline" size="28" :fill="themeColor" :strokeWidth="3"/>
       </div>
     </div>
-    <div style="height: 100%;padding-top: 40px">
+    <div style="height: 100%;padding-top: 40px;">
       <InfoTable v-if="model==='list'" :theme-color="themeColor" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
                  @copy-url="copyUrl"></InfoTable>
       <image-table v-if="model==='img'" :theme-color="themeColor" :onlyShowImages="onlyShowImages" :columns="columns" :img-size="imgSize" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"

@@ -1,5 +1,5 @@
 <template>
-    <div class="box" ref="box">
+    <div class="box" ref="box" :style="{height:scrollHeight - 40 + 'px'}">
       <table>
             <tr style="background-color: #f6f6f6">
                 <th v-for="item in tableHead"
@@ -85,6 +85,8 @@ const ZIP = [".RAR", ".ZIP", ".7Z"];
 const AUDIO = [".WAV", ".MP3", ".OGG"];
 const DOC = [".DOC",".DOCX"];
 const EXCEL = [".XLS",".XLSX"];
+const scrollHeight = ref(0);
+const scrollWidth = ref(0);
 const props = defineProps({
   tableData: {
     type: Array,
@@ -105,7 +107,9 @@ const props = defineProps({
 })
 
 onMounted(() => {
-    showTableData.value = props.tableData.slice(0, props.showMax);
+  showTableData.value = props.tableData.slice(0, props.showMax);
+  scrollHeight.value = window.innerHeight;
+  scrollWidth.value = window.innerWidth;
 })
 
 
@@ -141,8 +145,7 @@ watch(() => props.tableData, () => {
 </script>
 
 <style lang="scss" scoped>
-.box {
-  height: calc(100vh - 40px);
+.box {;
   overflow-y: scroll;
 }
 

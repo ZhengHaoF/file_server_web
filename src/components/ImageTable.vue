@@ -5,7 +5,7 @@
         :items="getShowTableData"
         class="virtual-list"
         key-field="index"
-        :style="{height:scrollHeight - 70 + 'px'}"
+        :style="{height:scrollHeight - 40 + 'px'}"
     >
       <template v-slot="{ item }">
         <div :key="index" v-for="(data,index) in item.childList" class="item" :style="{width:`calc(100%/${columns})`}" @click="clickFile(data.index)">
@@ -78,8 +78,8 @@ const key = ref(0);
 const scrollHeight = ref(0);
 const scrollWidth = ref(0);
 onMounted(() => {
-  scrollHeight.value = document.body.offsetHeight;
-  scrollWidth.value = document.body.offsetWidth;
+  scrollHeight.value = window.innerHeight;
+  scrollWidth.value = window.innerWidth;
   showTableData.value = props.tableData.slice(0, props.showMax);
   key.value++;
 })
@@ -161,11 +161,6 @@ watch(() => props.tableData, () => {
 </script>
 
 <style lang="scss" scoped>
-.box {
-  height: calc(100vh - 40px);
-  overflow-y: scroll;
-}
-
 .item{
   text-align: center;
   font-size: 14px;
@@ -190,6 +185,4 @@ watch(() => props.tableData, () => {
   }
 
 }
-
-
 </style>
