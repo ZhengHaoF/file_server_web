@@ -14,10 +14,8 @@
       </div>
     </div>
     <div style="height: 100%;padding-top: 40px;">
-      <InfoTable v-if="model==='list'" :theme-color="themeColor" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
-                 @copy-url="copyUrl"></InfoTable>
-      <image-table v-if="model==='img'" :theme-color="themeColor" :onlyShowImages="onlyShowImages" :columns="columns" :img-size="imgSize" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile"
-                   @copy-url="copyUrl"></image-table>
+      <InfoTable ref="InfoTableRef" v-if="model==='list'" :theme-color="themeColor" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile" @copy-url="copyUrl" @handleScroll="handleScroll"></InfoTable>
+      <image-table ref="imageTableRef" v-if="model==='img'" :theme-color="themeColor" :onlyShowImages="onlyShowImages" :columns="columns" :img-size="imgSize" :table-data="tableData" :table-head="tableHeader" @handleScroll="handleScroll" @clickFile="clickFile" @del-file="delFile" @copy-url="copyUrl"></image-table>
     </div>
     <Transition>
       <div v-if="imgShow" class="imgBox">
@@ -105,8 +103,10 @@ import Dialog from "@/components/Dialog.vue";
 import ImageTable from "@/components/ImageTable.vue";
 import InfoTable from "@/components/InfoTable.vue";
 import PickColors from 'vue-pick-colors'
-import {getScroll, setScroll, throttle} from "@/tools/tools";
+import {getScroll, setScroll} from "@/tools/tools";
 
+const InfoTableRef = ref(null);
+const imageTableRef = ref(null);
 const showDialog = ref(false);
 const delDialog = ref(false);
 const router = useRouter()
@@ -221,6 +221,14 @@ const getFilePath = (filePath, fileName) => {
   }
   filePath = filePath.replace(/__/g, "/")
   return `${filePath}/${fileName}`;
+}
+//滚动事件
+const handleScroll = (value)=>{
+  if(String(value).indexOf("index_") === -1){
+    setScroll(path.value,Math.floor(value))
+  }else{
+    setScroll(path.value,value)
+  }
 }
 const copyUrl = (index) => {
   let fileInfo = tableData.value[index];
@@ -365,8 +373,20 @@ const getFileList = () => {
         return item;
       })
       nextTick(()=>{
-        // console.log(getScroll(path.value),"读取的位置")
-        scrollTo({top: getScroll(path.value)})
+        console.log(getScroll(path.value),"读取的位置")
+        if(model.value === "list"){
+          if(getScroll(path.value).indexOf("index_") === -1){
+            InfoTableRef.value.setScroll(getScroll(path.value))
+          }else{
+            InfoTableRef.value.setScroll(0)
+          }
+        }else{
+          if(getScroll(path.value).indexOf("index_") !== -1){
+            imageTableRef.value.setScroll(getScroll(path.value).replaceAll("index_",""))
+          }else{
+            imageTableRef.value.setScroll(getScroll(path.value))
+          }
+        }
       })
     }
   }).catch((err)=>{
@@ -442,11 +462,11 @@ onMounted(() => {
   addHistory();
   getFileList();
 
-  function scr() {
-    setScroll(path.value,Math.floor(window.scrollY))
-    // console.log(Math.floor(window.scrollY),"存储的位置")
-  }
-  window.addEventListener('scroll',throttle(scr, 200));
+  // function scr() {
+  //   setScroll(path.value,Math.floor(window.scrollY))
+  //   // console.log(Math.floor(window.scrollY),"存储的位置")
+  // }
+  // window.addEventListener('scroll',throttle(scr, 200));
 })
 
 onUnmounted(() => {

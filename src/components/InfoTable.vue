@@ -62,22 +62,19 @@ import {onMounted, ref, watch} from "vue";
 import {VideoTwo,ImageFiles,FileZip,SeoFolder,AudioFile,FileDoc,FileExcel,AdobePhotoshop,FileCodeOne} from '@icon-park/vue-next';
 import {formatDate} from "../../utils/utils";
 
-/*
-滚动到底监听
+// 滚动到底监听
 import { useScroll } from '@vueuse/core'
 const box = ref(null)
 const { x, y, isScrolling, arrivedState, directions} = useScroll(box)
 //滚动监听
 watch(y,(n,o)=>{
+  emit("handleScroll",y.value)
   //是否滚动到底部
-  if(arrivedState.bottom){
-    console.log("滚动到底部了")
-  }
 })
- */
+
 const show = ref(false);
 const showTableData = ref([]);
-const emit = defineEmits(['clickFile','copyUrl','delFile'])
+const emit = defineEmits(['clickFile','copyUrl','delFile','handleScroll'])
 const VIDEO = [".MP4", ".AVI", ".MOV", ".FLV",".MKV"];
 const IMG = [".JPG", ".JPEG", ".PNG", ".WEBP"];
 const PS = [".PSD"];
@@ -141,7 +138,13 @@ watch(() => props.tableData, () => {
         showTableData.value = props.tableData;
     }
 })
-
+//滚动到指定位置
+const setScroll = (value)=>{
+  box.value.scrollTo({top:value})
+}
+defineExpose({
+  setScroll,
+});
 </script>
 
 <style lang="scss" scoped>

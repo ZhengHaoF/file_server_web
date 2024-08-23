@@ -1,8 +1,11 @@
 <template>
   <div class="box">
     <RecycleScroller
+        ref="scroller"
         :item-size="Math.floor(scrollWidth/columns) + 20"
         :items="getShowTableData"
+        :emitUpdate="scrollReady"
+        @update="getScrollTop"
         class="virtual-list"
         key-field="index"
         :style="{height:scrollHeight - 40 + 'px'}"
@@ -32,11 +35,11 @@
   </div>
 </template>
 <script setup>
-import {computed, onMounted, ref, watch} from "vue";
+import {computed, nextTick, onMounted, ref, watch} from "vue";
 import {VideoFile,FileZip,SeoFolder,AudioFile,FileDoc,FileExcel,AdobePhotoshop,FileCodeOne} from '@icon-park/vue-next';
 const show = ref(false);
 const showTableData = ref([]);
-const emit = defineEmits(['clickFile','copyUrl','delFile'])
+const emit = defineEmits(['clickFile','copyUrl','delFile','handleScroll'])
 const VIDEO = [".MP4", ".AVI", ".MOV", ".FLV",".MKV"];
 const IMG = [".JPG", ".JPEG", ".PNG", ".WEBP"];
 const PS = [".PSD"];
@@ -82,6 +85,10 @@ onMounted(() => {
   scrollWidth.value = window.innerWidth;
   showTableData.value = props.tableData.slice(0, props.showMax);
   key.value++;
+  scrollReady.value = false;
+  nextTick(()=>{
+    scrollReady.value = true;
+  })
 })
 const getShowTableData = computed(() => {
   let list = [];
@@ -132,23 +139,28 @@ const getShowTableData = computed(() => {
 const clickFile = (index) => {
   emit("clickFile", index)
 }
-const changeShow = () => {
-  show.value = !show.value;
-  if (show.value) {
-    //展开
-    showTableData.value = props.tableData;
-  } else {
-    //收起
-    showTableData.value = props.tableData.slice(0, props.showMax)
-  }
-}
 const copyUrl = (index)=>{
   emit("copyUrl", index)
 }
 const delFile = (index)=>{
   emit("delFile", index)
 }
+const scroller = ref(null)
+const scrollReady = ref(false)
+const getScrollTop = ()=>{
+  if(scroller?.value?.$_lastUpdateScrollPosition !== 0){
+    emit("handleScroll",`index_${Math.floor(scroller?.value?.$_lastUpdateScrollPosition)}`)
+  }
+}
 
+//滚动到指定位置
+const setScroll = (value)=>{
+  console.log(value)
+  scroller.value.scrollToPosition(value);
+}
+defineExpose({
+  setScroll,
+});
 watch(() => props.tableData, () => {
   show.value = false;
   if (props.tableData.length > props.showMax) {
