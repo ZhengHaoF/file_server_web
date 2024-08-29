@@ -14,8 +14,13 @@
       </div>
     </div>
     <div style="height: 100%;padding-top: 40px;">
-      <InfoTable ref="InfoTableRef" v-if="model==='list'" :theme-color="themeColor" :table-data="tableData" :table-head="tableHeader" @clickFile="clickFile" @del-file="delFile" @copy-url="copyUrl" @handleScroll="handleScroll"></InfoTable>
-      <image-table ref="imageTableRef" v-if="model==='img'" :theme-color="themeColor" :onlyShowImages="onlyShowImages" :columns="columns" :img-size="imgSize" :table-data="tableData" :table-head="tableHeader" @handleScroll="handleScroll" @clickFile="clickFile" @del-file="delFile" @copy-url="copyUrl"></image-table>
+      <InfoTable :key="infoTableKey" v-if="model==='list'" ref="InfoTableRef" :table-data="getTableDate" :table-head="tableHeader"
+                 :theme-color="themeColor" @clickFile="clickFile" @handleScroll="handleScroll" @del-file="delFile"
+                 @copy-url="copyUrl"></InfoTable>
+      <ImageTable :key="imageTableKey" v-if="model==='img'" ref="imageTableRef" :columns="columns" :img-size="imgSize"
+                   :onlyShowImages="onlyShowImages" :table-data="getTableDate" :table-head="tableHeader" :theme-color="themeColor"
+                   @clickFile="clickFile" @handleScroll="handleScroll" @del-file="delFile"
+                   @copy-url="copyUrl"></ImageTable>
     </div>
     <Transition>
       <div v-if="imgShow" class="imgBox">
@@ -76,6 +81,24 @@
             </select>
           </div>
           <div class="set-item">
+            <span>文件排序方式：</span>
+            <select class="select-input" v-model="fileSore">
+              <option value="timeStoB">时间正序</option>
+              <option value="timeBtoS">时间倒序</option>
+              <option value="sizeStoB">大小正序</option>
+              <option value="sizeBtoS">大小倒序</option>
+              <option value="nameStoB">名称正序</option>
+              <option value="nameBtoS">名称倒序</option>
+            </select>
+          </div>
+          <div class="set-item">
+            <span>文件夹位置：</span>
+            <select class="select-input" v-model="folderSort">
+              <option value="start">最前</option>
+              <option value="end">最后</option>
+            </select>
+          </div>
+          <div class="set-item">
             <span>图片模式只显示图片：</span><input type="checkbox" v-model="onlyShowImages">
           </div>
           <div class="set-item">
@@ -96,7 +119,7 @@
 </template>
 <script setup>
 import {ArrowCircleLeft, ArrowCircleRight, Close, Return,ListBottom,AllApplication,SettingTwo} from "@icon-park/vue-next";
-import {nextTick, onMounted, onUnmounted, ref, watch} from "vue";
+import {computed, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
 import axios from "axios";
 import {useRoute, useRouter} from "vue-router";
 import Dialog from "@/components/Dialog.vue";
@@ -107,14 +130,12 @@ import {getScroll, setScroll} from "@/tools/tools";
 
 const InfoTableRef = ref(null);
 const imageTableRef = ref(null);
+const infoTableKey = ref(0);
+const imageTableKey = ref(0);
 const showDialog = ref(false);
 const delDialog = ref(false);
 const router = useRouter()
 const route = useRoute()
-//图片长边大小
-const imgSize = ref(500)
-//列数
-const columns = ref(3)
 let local;
 if(import.meta.env.MODE === "development"){
   local = "http://localhost:3000"//测试用
@@ -122,7 +143,44 @@ if(import.meta.env.MODE === "development"){
   local = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`
 }
 const path = ref("$")
-const tableData = ref([])
+const tableData = ref([]);
+const getTableDate = computed(()=>{
+  let newTableDate = [];
+  switch (fileSore.value) {
+    case "timeStoB":
+      newTableDate =  jsonSort(tableData.value, "mtime",true);
+      break;
+    case "timeBtoS":
+      newTableDate = jsonSort(tableData.value, "mtime");
+      break;
+    case "sizeStoB":
+      newTableDate = jsonSort(tableData.value, "sizeRow",true);
+      break;
+    case "sizeBtoS":
+      newTableDate = jsonSort(tableData.value, "sizeRow");
+      break;
+    case "nameStoB":
+      newTableDate = jsonSort(tableData.value, "name",true);
+      break;
+    case "nameBtoS":
+      newTableDate = jsonSort(tableData.value, "name");
+      break;
+    default:
+      newTableDate = tableData.value;
+  }
+
+  switch (folderSort.value) {
+    case "start":
+      newTableDate =  jsonSort(tableData.value, "isFile",true);
+      break;
+    case "end":
+      newTableDate = jsonSort(tableData.value, "isFile");
+      break;
+    default:
+      newTableDate = tableData.value;
+  }
+  return newTableDate;
+})
 const tableHeader = ref([
   {
     span: "文件名",
@@ -151,10 +209,10 @@ const tableHeader = ref([
   //   bgColor: "green",
   // },
 ])
-const themeColor = ref("#FA7868")
 
 //加载框使用的图片
 import loadingImg from "../assets/loading.png"
+import {jsonSort} from "../tools/tools";
 //显示加载框
 const showLoading = ref(false);
 
@@ -364,6 +422,7 @@ const getFileList = () => {
         return;
       }
       tableData.value = data.map((item) => {
+        item['sizeRow'] = Number(item['size']);
         item['size'] = (Number(item['size']) / 1024 / 1024).toFixed(2) + "MB";
         if (item['isDirectory']) {
           item['size'] = "";
@@ -424,13 +483,30 @@ const SetString = ()=>{
   setStringShow.value = true;
 }
 
-const playMode = ref("ask")
+//设置菜单代码块
+
+//主题色
+const themeColor = ref("#FA7868")
+//播放方式
+const playMode = ref("ask");
+//文件排序方式
+const fileSore = ref("timeStoB");
+//文件夹位置
+const folderSort = ref("start");
+//图片长边大小
+const imgSize = ref(500)
+//列数
+const columns = ref(3)
 const setOk = ()=>{
   setStringShow.value = false;
   localStorage.setItem("imgSize",String(imgSize.value))
   localStorage.setItem("playMode",String(playMode.value))
   localStorage.setItem("columns",String(columns.value))
+  localStorage.setItem("fileSore",String(fileSore.value))
+  localStorage.setItem("folderSort",String(folderSort.value))
   localStorage.setItem("themeColor",String(themeColor.value))
+  infoTableKey.value++;
+  imageTableKey.value++;
 }
 
 const clearCache = ()=>{
@@ -449,6 +525,10 @@ onMounted(() => {
   columns.value = Number(localStorage.getItem("columns") || 3);
   //默认播放方式
   playMode.value = localStorage.getItem("playMode") || "ask";
+  //文件夹位置
+  folderSort.value = localStorage.getItem("folderSort") || "start";
+  //文件排序方式
+  fileSore.value = localStorage.getItem("fileSore") || "timeStoB";
   //图片模式下只显示图片和文件夹
   onlyShowImages.value = localStorage.getItem("onlyShowImages") === 'true';
   console.log(onlyShowImages.value)
