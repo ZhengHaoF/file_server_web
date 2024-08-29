@@ -69,7 +69,7 @@
             <span>图片模式列数：</span><input type="number" class="PxInput" v-model="columns"> 列
           </div>
           <div class="set-item">
-            <span>主题色：</span><pick-colors z-index="99999" width="50" v-model:value="themeColor"/>
+            <span>主题色：</span><pick-colors :z-index="99999" width="50" v-model:value="themeColor"/>
           </div>
           <div class="set-item">
             <span>视屏打开方式：</span>
