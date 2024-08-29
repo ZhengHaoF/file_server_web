@@ -169,17 +169,30 @@ const getTableDate = computed(()=>{
       newTableDate = tableData.value;
   }
 
+  let newTableDate2 = [];
   switch (folderSort.value) {
     case "start":
-      newTableDate =  jsonSort(tableData.value, "isFile",true);
+      newTableDate.forEach((item)=>{
+        if(item.isFile){
+          newTableDate2.push(item)
+        }else{
+          newTableDate2.unshift(item)
+        }
+      })
       break;
     case "end":
-      newTableDate = jsonSort(tableData.value, "isFile");
+      newTableDate.forEach((item)=>{
+        if(item.isFile){
+          newTableDate2.unshift(item)
+        }else{
+          newTableDate2.push(item)
+        }
+      })
       break;
     default:
-      newTableDate = tableData.value;
+      newTableDate2 = newTableDate.value;
   }
-  return newTableDate;
+  return newTableDate2;
 })
 const tableHeader = ref([
   {
