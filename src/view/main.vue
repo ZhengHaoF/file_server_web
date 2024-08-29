@@ -302,7 +302,7 @@ const handleScroll = (value)=>{
   }
 }
 const copyUrl = (index) => {
-  let fileInfo = tableData.value[index];
+  let fileInfo = getTableDate.value[index];
   try {
     navigator.share({
       title: fileInfo.name,
@@ -335,7 +335,7 @@ const closeBtn = () => {
 const delBtn = () => {
   delDialog.value = false;
   nextTick(() => {
-    let fileInfo = tableData.value[nowFileIndex.value];
+    let fileInfo = getTableDate.value[nowFileIndex.value];
     axios.post(`${local}/delFile`, {
       filePath: getFilePath(path.value, fileInfo.name)
     }).then((res, err) => {
@@ -374,7 +374,7 @@ const playVideo = (t) => {
 const playUrl = ref("");
 const clickFile = (index) => {
   //文件信息
-  let fileInfo = tableData.value[index];
+  let fileInfo = getTableDate.value[index];
   if (fileInfo.isDirectory && !fileInfo.isFile) {
     //是文件夹
     path.value += `__${fileInfo.name}`
@@ -395,14 +395,14 @@ const clickFile = (index) => {
       //图片
       imgUrls.value = [];
       let num = 0;
-      for (let i = 0; i < tableData.value.length; i++) {
-        let fileSuffix2 = tableData.value[i].suffix;
+      for (let i = 0; i < getTableDate.value.length; i++) {
+        let fileSuffix2 = getTableDate.value[i].suffix;
         if (IMG.includes(fileSuffix2.toUpperCase())) {
-          if (tableData.value[i].name === tableData.value[index].name) {
+          if (getTableDate.value[i].name === getTableDate.value[index].name) {
             nowImgIndex.value = num;
           }
           num++;
-          imgUrls.value.push(getFileUrl(path.value, tableData.value[i].name))
+          imgUrls.value.push(getFileUrl(path.value, getTableDate.value[i].name))
         }
       }
 
