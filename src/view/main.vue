@@ -102,6 +102,9 @@
             <span>图片模式只显示图片：</span><input type="checkbox" v-model="onlyShowImages">
           </div>
           <div class="set-item">
+            <span>是否查看原图：</span><input type="checkbox" v-model="viewOriginalImage">
+          </div>
+          <div class="set-item">
             <div class="close-btn" @click="clearCache">清空缓存</div>
           </div>
         </template>
@@ -392,6 +395,7 @@ const clickFile = (index) => {
         playVideo(playMode.value)
       }
     } else if (IMG.includes(fileSuffix.toUpperCase())) {
+      let w = window.screen.width;
       //图片
       imgUrls.value = [];
       let num = 0;
@@ -402,7 +406,11 @@ const clickFile = (index) => {
             nowImgIndex.value = num;
           }
           num++;
-          imgUrls.value.push(getFileUrl(path.value, getTableDate.value[i].name))
+          if(viewOriginalImage.value){
+            imgUrls.value.push(getFileUrl(path.value, getTableDate.value[i].name));
+          }else {
+            imgUrls.value.push(getFileUrl(path.value, getTableDate.value[i].name) + `!${w}x${w}`);
+          }
         }
       }
 
@@ -528,8 +536,12 @@ const clearCache = ()=>{
 }
 
 const onlyShowImages = ref(false);
+const viewOriginalImage = ref(false);
 watch(onlyShowImages, (newName, oldName) => {
   localStorage.setItem("onlyShowImages", String(newName));
+});
+watch(viewOriginalImage, (newName, oldName) => {
+  localStorage.setItem("viewOriginalImage", String(newName));
 });
 onMounted(() => {
   //预览图片大小
@@ -544,7 +556,7 @@ onMounted(() => {
   fileSore.value = localStorage.getItem("fileSore") || "timeStoB";
   //图片模式下只显示图片和文件夹
   onlyShowImages.value = localStorage.getItem("onlyShowImages") === 'true';
-  console.log(onlyShowImages.value)
+  viewOriginalImage.value = localStorage.getItem("viewOriginalImage") === 'true';
   //主题色
   themeColor.value = localStorage.getItem("themeColor") || "#f6823b";
   model.value = localStorage.getItem("model") || "list";
