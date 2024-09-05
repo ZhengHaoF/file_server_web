@@ -447,14 +447,14 @@ const getFileList = () => {
       nextTick(()=>{
         console.log(getScroll(path.value),"读取的位置")
         if(model.value === "list"){
-          if(getScroll(path.value).indexOf("index_") === -1){
+          if(String(getScroll(path.value)).indexOf("index_") === -1){
             InfoTableRef.value.setScroll(getScroll(path.value))
           }else{
             InfoTableRef.value.setScroll(0)
           }
         }else{
-          if(getScroll(path.value).indexOf("index_") !== -1){
-            imageTableRef.value.setScroll(getScroll(path.value).replaceAll("index_",""))
+          if(String(getScroll(path.value)).indexOf("index_") !== -1){
+            imageTableRef.value.setScroll(String(getScroll(path.value)).replaceAll("index_",""))
           }else{
             imageTableRef.value.setScroll(getScroll(path.value))
           }
