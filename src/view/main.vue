@@ -229,6 +229,7 @@ const tableHeader = ref([
 //加载框使用的图片
 import loadingImg from "../assets/loading.png"
 import {jsonSort} from "../tools/tools";
+import {getRatio} from "../../utils/utils";
 //显示加载框
 const showLoading = ref(false);
 
@@ -395,7 +396,7 @@ const clickFile = (index) => {
         playVideo(playMode.value)
       }
     } else if (IMG.includes(fileSuffix.toUpperCase())) {
-      let w = window.screen.width;
+      let w = window.screen.width*getRatio()/100;//获取屏幕分辨率
       //图片
       imgUrls.value = [];
       let num = 0;
@@ -515,7 +516,7 @@ const fileSore = ref("timeStoB");
 //文件夹位置
 const folderSort = ref("start");
 //图片长边大小
-const imgSize = ref(500)
+const imgSize = ref(150)
 //列数
 const columns = ref(3)
 const setOk = ()=>{
