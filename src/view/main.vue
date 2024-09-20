@@ -396,7 +396,7 @@ const clickFile = (index) => {
         playVideo(playMode.value)
       }
     } else if (IMG.includes(fileSuffix.toUpperCase())) {
-      let w = window.screen.width*getRatio()/100;//获取屏幕分辨率
+      let w = (window.screen.width*getRatio()/100).toFixed(0);//获取屏幕分辨率
       //图片
       imgUrls.value = [];
       let num = 0;
