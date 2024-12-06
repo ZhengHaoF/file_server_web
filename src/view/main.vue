@@ -163,10 +163,10 @@ const getTableDate = computed(()=>{
       newTableDate = jsonSort(tableData.value, "sizeRow");
       break;
     case "nameStoB":
-      newTableDate = jsonSort(tableData.value, "name",true);
+      newTableDate = jsonSort(tableData.value, "name");
       break;
     case "nameBtoS":
-      newTableDate = jsonSort(tableData.value, "name");
+      newTableDate = jsonSort(tableData.value, "name",true);
       break;
     default:
       newTableDate = tableData.value;
