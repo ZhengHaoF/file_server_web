@@ -107,6 +107,9 @@
           <div class="set-item">
             <div class="close-btn" @click="clearCache">清空缓存</div>
           </div>
+          <div class="set-item">
+            密码：<input type="number" class="PxInput" v-model="restartTheServerPwd"><div class="red-btn" @click="restartTheServer">重启服务器</div>
+          </div>
         </template>
       </Dialog>
     </Transition>
@@ -285,7 +288,7 @@ const getFileUrl = (filePath, fileName) => {
   }
   filePath = filePath.replace(/__/g, "/")
   // console.log(`获取文件：${local}/getFile${filePath}/${fileName}`)
-  return `${local}/getFile${filePath}/${fileName}`;
+  return `${local}/getFile${filePath}/${window.encodeURIComponent(fileName)}`;
 }
 
 const getFilePath = (filePath, fileName) => {
@@ -435,7 +438,7 @@ const clickFile = (index) => {
 }
 const getFileList = () => {
   showLoading.value = true;
-  axios.get(`${local}/list/${path.value}`).then((res, err) => {
+  axios.get(`${local}/list/${window.encodeURIComponent(path.value)}`).then((res, err) => {
     showLoading.value = false;
     if (res.status === 200) {
       let data = res?.data?.list;
@@ -534,6 +537,22 @@ const setOk = ()=>{
 const clearCache = ()=>{
   localStorage.clear();
   location.reload();
+}
+
+
+const restartTheServerPwd  = ref("");
+const restartTheServer = ()=>{
+  axios.post(`${local}/restartServer`,{
+    pwd:restartTheServerPwd.value
+  }).then((res)=>{
+    if(res.data.msg === "开始重启"){
+      console.log(6666)
+      router.go(0)
+    }else{
+      alert(res.data.msg)
+    }
+  })
+
 }
 
 const onlyShowImages = ref(false);
