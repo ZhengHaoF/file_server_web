@@ -490,12 +490,13 @@ const addHistory = () => {
   if (window.history && window.history.pushState) {
     // 往历史记录里面添加一条新的当前页面的url
     history.pushState(null, null, document.URL);
-    // 给 popstate 绑定一个方法 监听页面刷新
-    window.addEventListener('popstate', backChange, false);//false阻止默认事件
   }
 }
 
-
+router.beforeEach((to, from, next) => {
+  console.log(666)
+  next();
+});
 const model = ref("list")
 //切换图片/列表模式
 const changeMode = () => {
@@ -564,6 +565,10 @@ watch(viewOriginalImage, (newName, oldName) => {
   localStorage.setItem("viewOriginalImage", String(newName));
 });
 onMounted(() => {
+  // 给 popstate 绑定一个方法 监听页面刷新
+  window.addEventListener('popstate', backChange, false);//false阻止默认事件
+
+
   //预览图片大小
   imgSize.value = Number(localStorage.getItem("imgSize") || 500);
   //图片模式查看列数
