@@ -532,7 +532,6 @@ const addHistory = () => {
   router.push({
     ...currentRoute,
     query: {
-      ...currentRoute.query,
       _t: Date.now(), // 添加一个时间戳作为查询参数
     },
   });
