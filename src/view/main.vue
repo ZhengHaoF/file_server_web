@@ -134,6 +134,11 @@ import InfoTable from "@/components/InfoTable.vue";
 import PickColors from 'vue-pick-colors'
 import {getScroll, setScroll} from "@/tools/tools";
 
+import { storeToRefs } from 'pinia'
+import { useAlertsStore } from '@/store/store'
+const store = useAlertsStore()
+const { videoList } = storeToRefs(store);
+
 const InfoTableRef = ref(null);
 const imageTableRef = ref(null);
 const infoTableKey = ref(0);
@@ -236,6 +241,18 @@ import {getRatio} from "../../utils/utils";
 //显示加载框
 const showLoading = ref(false);
 
+// const canJump = ()=>{
+//   return false
+// }
+// router.beforeEach((to, from, next) => {
+//   if(canJump()){
+//     next();
+//   }else{
+//     return false
+//   }
+// });
+
+
 const returnPath = () => {
   if(imgShow.value || showDialog.value || delDialog.value || setStringShow.value){
     imgShow.value = false;
@@ -324,7 +341,7 @@ const delFile = (index) => {
   nowFileIndex.value = index;
 }
 
-const VIDEO = [".MP4", ".AVI", ".MOV", ".FLV", ".MKV"];
+const VIDEO = [".MP4", ".AVI", ".MOV", ".FLV", ".MKV",".TS"];
 const IMG = [".JPG", ".JPEG", ".PNG", ".WEBP"];
 const PS = [".PSD"];
 const ZIP = [".RAR", ".ZIP", ".7Z"];
@@ -353,7 +370,17 @@ const delBtn = () => {
   })
 }
 
+
 const playVideo = (t) => {
+  //获取视屏列表
+  videoList.value = getTableDate.value.filter((item)=>{
+    return VIDEO.includes(item.suffix.toUpperCase());
+  })
+
+  videoList.value.forEach((item)=>{
+    item.videoUrl = getFileUrl(path.value, item.name)
+  })
+
   showDialog.value = false;
   nextTick(() => {
     if (t === 'web') {
@@ -363,7 +390,9 @@ const playVideo = (t) => {
           url: playUrl.value,
         }
       })
-      window.open(href.href)
+
+      router.push(href)
+      // window.open(href.href)
     } else if (t === 'vlc') {
       window.open('vlc://' + playUrl.value)
     }else{
@@ -373,7 +402,9 @@ const playVideo = (t) => {
           url: playUrl.value,
         }
       })
-      window.open(href.href)
+
+      router.push(href)
+      // window.open(href.href)
     }
   })
 }
@@ -493,10 +524,6 @@ const addHistory = () => {
   }
 }
 
-router.beforeEach((to, from, next) => {
-  console.log(666)
-  next();
-});
 const model = ref("list")
 //切换图片/列表模式
 const changeMode = () => {
@@ -547,7 +574,6 @@ const restartTheServer = ()=>{
     pwd:restartTheServerPwd.value
   }).then((res)=>{
     if(res.data.msg === "开始重启"){
-      console.log(6666)
       router.go(0)
     }else{
       alert(res.data.msg)
@@ -564,7 +590,11 @@ watch(onlyShowImages, (newName, oldName) => {
 watch(viewOriginalImage, (newName, oldName) => {
   localStorage.setItem("viewOriginalImage", String(newName));
 });
+
+
+
 onMounted(() => {
+
   // 给 popstate 绑定一个方法 监听页面刷新
   window.addEventListener('popstate', backChange, false);//false阻止默认事件
 

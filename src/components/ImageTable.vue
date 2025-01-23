@@ -40,7 +40,7 @@ import {VideoFile,FileZip,SeoFolder,AudioFile,FileDoc,FileExcel,AdobePhotoshop,F
 const show = ref(false);
 const showTableData = ref([]);
 const emit = defineEmits(['clickFile','copyUrl','delFile','handleScroll'])
-const VIDEO = [".MP4", ".AVI", ".MOV", ".FLV",".MKV"];
+const VIDEO = [".MP4", ".AVI", ".MOV", ".FLV",".MKV",".TS"];
 const IMG = [".JPG", ".JPEG", ".PNG", ".WEBP"];
 const PS = [".PSD"];
 const ZIP = [".RAR", ".ZIP", ".7Z"];
