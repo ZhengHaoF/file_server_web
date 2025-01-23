@@ -127,7 +127,7 @@
 import {ArrowCircleLeft, ArrowCircleRight, Close, Return,ListBottom,AllApplication,SettingTwo} from "@icon-park/vue-next";
 import {computed, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
 import axios from "axios";
-import {useRoute, useRouter} from "vue-router";
+import {useRoute, useRouter,onBeforeRouteLeave} from "vue-router";
 import Dialog from "@/components/Dialog.vue";
 import ImageTable from "@/components/ImageTable.vue";
 import InfoTable from "@/components/InfoTable.vue";
@@ -241,16 +241,26 @@ import {getRatio} from "../../utils/utils";
 //显示加载框
 const showLoading = ref(false);
 
-// const canJump = ()=>{
-//   return false
-// }
-// router.beforeEach((to, from, next) => {
-//   if(canJump()){
-//     next();
-//   }else{
-//     return false
-//   }
-// });
+const canJump = (to)=>{
+  if(
+      path.value === "$" ||
+      to.fullPath.includes("HtmlVideoPlay") ||
+      to.fullPath.includes("VideoPlay")
+  ){
+    return true;
+  }
+  return false
+}
+
+onBeforeRouteLeave((to,from,next)=>{
+  if(canJump(to)){
+    console.log("允许通过")
+    next();
+  }else{
+    console.log("拦截路由")
+    next(false);
+  }
+})
 
 
 const returnPath = () => {
@@ -390,7 +400,6 @@ const playVideo = (t) => {
           url: playUrl.value,
         }
       })
-
       router.push(href)
       // window.open(href.href)
     } else if (t === 'vlc') {
@@ -518,10 +527,15 @@ const backChange = () => {
 }
 
 const addHistory = () => {
-  if (window.history && window.history.pushState) {
-    // 往历史记录里面添加一条新的当前页面的url
-    history.pushState(null, null, document.URL);
-  }
+  const currentRoute = router.currentRoute.value;
+  // 使用 router.push 添加一个新的路由记录
+  router.push({
+    ...currentRoute,
+    query: {
+      ...currentRoute.query,
+      _t: Date.now(), // 添加一个时间戳作为查询参数
+    },
+  });
 }
 
 const model = ref("list")
@@ -596,7 +610,7 @@ watch(viewOriginalImage, (newName, oldName) => {
 onMounted(() => {
 
   // 给 popstate 绑定一个方法 监听页面刷新
-  window.addEventListener('popstate', backChange, false);//false阻止默认事件
+  window.addEventListener('popstate', backChange, true);//false阻止默认事件
 
 
   //预览图片大小
@@ -630,7 +644,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  window.removeEventListener('popstate', backChange, false);//false阻止默认事件
+  window.removeEventListener('popstate', backChange, true);//false阻止默认事件
 })
 
 watch(path, (newName, oldName) => {
