@@ -18,29 +18,23 @@ import { storeToRefs } from 'pinia'
 import {useAlertsStore} from "@/store/store";
 const store = useAlertsStore();
 const { videoList } = storeToRefs(store);
+const emit = defineEmits(['nextVideo', 'prevVideo']);
+const props = defineProps({
+  url: {
+    type: String,
+    default: ""
+  }
+});
 
 onMounted(() => {
-  url.value = route.query.url;
+  url.value = props.url || route.query.url;
 })
 const previous = () => {
-
-  if (index.value < 0) {
-    index.value = videoList.value.length - 1;
-  }
-  if(videoList.value[index.value]){
-    url.value = videoList.value[index.value].videoUrl;
-  }
-  index.value--;
+  emit("prevVideo")
 }
 
 const next = () => {
-  if(index.value > videoList.value.length - 1){
-    index.value = 0;
-  }
-  if(videoList.value[index.value]){
-    url.value = videoList.value[index.value].videoUrl;
-  }
-  index.value++
+  emit("nextVideo")
 }
 
 </script>

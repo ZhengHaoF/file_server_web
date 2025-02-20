@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <div class="main">
+    <div class="main" :class="{'big-main':bigDialog}">
       <div class="title"><span>{{ props.title }}</span></div>
       <div class="body">
         <slot name="body">
@@ -28,6 +28,10 @@ const props = defineProps({
   okBtnText: {
     type: String,
     default: "确定",
+  },
+  bigDialog: {
+    type: Boolean,
+    default: false,
   },
 })
 const emit = defineEmits(['okBtn','closeBtn'])
@@ -74,9 +78,6 @@ const closeBtn = () => {
       }
     }
 
-    .body {
-    }
-
     .footer {
       bottom: 0;
       height: 50px;
@@ -116,6 +117,9 @@ const closeBtn = () => {
       //  font-size: 14px;
       //}
     }
+  }
+  .big-main{
+    width: 100vw;
   }
 }
 </style>

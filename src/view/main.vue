@@ -113,6 +113,14 @@
         </template>
       </Dialog>
     </Transition>
+
+    <Transition>
+      <Dialog v-if="showVideoPlay" :okBtnText="'关闭'" :btnNum="1" :big-dialog="true" :title="'视屏播放'" @ok-btn="showVideoPlay = false">
+        <template #body>
+          <html-video-play :key="videoKey" @next-video="nextVideo" @prev-video="preVideo" :url="playUrl"></html-video-play>
+        </template>
+      </Dialog>
+    </Transition>
     <Transition>
       <div class="loading" v-if="showLoading">
         <div style="position: relative;width: 100%;height: 100%">
@@ -137,7 +145,6 @@ import {getScroll, setScroll} from "@/tools/tools";
 import { storeToRefs } from 'pinia'
 import { useAlertsStore } from '@/store/store'
 const store = useAlertsStore()
-const { videoList } = storeToRefs(store);
 
 const InfoTableRef = ref(null);
 const imageTableRef = ref(null);
@@ -238,6 +245,7 @@ const tableHeader = ref([
 import loadingImg from "../assets/loading.png"
 import {jsonSort} from "../tools/tools";
 import {getRatio} from "../../utils/utils";
+import HtmlVideoPlay from "@/view/HtmlVideoPlay.vue";
 //显示加载框
 const showLoading = ref(false);
 
@@ -281,6 +289,35 @@ const nowImageSrc = ref("");
 const nowImgIndex = ref(0);
 const nowFileIndex = ref(0);
 const imgShow = ref(false);
+
+
+const nextVideo = () =>{
+  for (let i = playIndex.value + 1; i < getTableDate.value.length - 1; i++) {
+    let fileInfo = getTableDate.value[i]
+    if(VIDEO.includes(fileInfo.suffix.toUpperCase())){
+      playIndex.value = i;
+      playUrl.value = getFileUrl(path.value, fileInfo.name);
+      videoKey.value++;
+      break;
+    }
+  }
+}
+
+const preVideo = () =>{
+
+  for (let i = playIndex.value - 1; i >= 0; i--) {
+    let fileInfo = getTableDate.value[i]
+    if(VIDEO.includes(fileInfo.suffix.toUpperCase())){
+      playIndex.value = i;
+      playUrl.value = getFileUrl(path.value, fileInfo.name);
+      console.log(playUrl.value)
+      videoKey.value++;
+      break;
+    }
+  }
+
+}
+
 //下一张图片
 const nextImg = () => {
   nowImgIndex.value++
@@ -301,7 +338,6 @@ const preImg = () => {
 const showImg = () => {
   imgShow.value = true;
   nowImageSrc.value = imgUrls.value[nowImgIndex.value];
-  console.log(imgUrls.value)
 }
 const headImg = () => {
   imgShow.value = false;
@@ -382,15 +418,6 @@ const delBtn = () => {
 
 
 const playVideo = (t) => {
-  //获取视屏列表
-  videoList.value = getTableDate.value.filter((item)=>{
-    return VIDEO.includes(item.suffix.toUpperCase());
-  })
-
-  videoList.value.forEach((item)=>{
-    item.videoUrl = getFileUrl(path.value, item.name)
-  })
-
   showDialog.value = false;
   nextTick(() => {
     if (t === 'web') {
@@ -405,20 +432,25 @@ const playVideo = (t) => {
     } else if (t === 'vlc') {
       window.open('vlc://' + playUrl.value)
     }else{
-      let href = router.resolve({
-        path: "/HtmlVideoPlay",
-        query: {
-          url: playUrl.value,
-        }
-      })
 
-      router.push(href)
+      showVideoPlay.value = true;
+      //
+      // let href = router.resolve({
+      //   path: "/HtmlVideoPlay",
+      //   query: {
+      //     url: playUrl.value,
+      //   }
+      // })
+      //
+      // router.push(href)
       // window.open(href.href)
     }
   })
 }
 
 const playUrl = ref("");
+const playIndex = ref(0);
+const videoKey = ref(0);
 const clickFile = (index) => {
   //文件信息
   let fileInfo = getTableDate.value[index];
@@ -436,7 +468,8 @@ const clickFile = (index) => {
         //视屏播放是否询问
         showDialog.value = true;
       }else{
-        playVideo(playMode.value)
+        playVideo(playMode.value);
+        playIndex.value = index;
       }
     } else if (IMG.includes(fileSuffix.toUpperCase())) {
       let w = (window.screen.width*getRatio()/100).toFixed(0);//获取屏幕分辨率
@@ -545,6 +578,7 @@ const changeMode = () => {
 }
 
 const setStringShow = ref(false)
+const showVideoPlay = ref(false)
 const SetString = ()=>{
   setStringShow.value = true;
 }
