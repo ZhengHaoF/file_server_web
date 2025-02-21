@@ -14,13 +14,13 @@
         <div :key="index" v-for="(data,index) in item.childList" class="item" :style="{width:`calc(100%/${columns})`}" @click="clickFile(data.index)">
           <div class="icon">
             <seo-folder class="icon-svg" theme="filled" :fill="themeColor" :size="iconSize" :strokeWidth="1" v-if="data['isDirectory']"/>
-            <video-file class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="VIDEO.includes(data['suffix'].toUpperCase())"/>
-            <img class="icon-svg imgLazy" v-lazy="data.url + `!${imgSize}x${imgSize}`" style="object-fit: cover;width: 100%;height: 100%;aspect-ratio:1/1;border-radius: 10px;" v-else-if="IMG.includes(data['suffix'].toUpperCase())" alt="data.name" src=""/>
-            <file-zip class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="ZIP.includes(data['suffix'].toUpperCase())"/>
-            <audio-file class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="AUDIO.includes(data['suffix'].toUpperCase())"/>
-            <file-doc class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="DOC.includes(data['suffix'].toUpperCase())"/>
-            <file-excel class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="EXCEL.includes(data['suffix'].toUpperCase())"/>
-            <adobe-photoshop class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="PS.includes(data['suffix'].toUpperCase())"/>
+            <video-file class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="determineFileType(data['suffix']) === 'VIDEO'"/>
+            <img class="icon-svg imgLazy" v-lazy="data.url + `!${imgSize}x${imgSize}`" style="object-fit: cover;width: 100%;height: 100%;aspect-ratio:1/1;border-radius: 10px;" v-else-if="determineFileType(data['suffix']) === 'IMG'" alt="data.name" src=""/>
+            <file-zip class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="determineFileType(data['suffix']) === 'ZIP'"/>
+            <audio-file class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="determineFileType(data['suffix']) === 'AUDIO'"/>
+            <file-doc class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="determineFileType(data['suffix']) === 'DOC'"/>
+            <file-excel class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="determineFileType(data['suffix']) === 'EXCEL'"/>
+            <adobe-photoshop class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="determineFileType(data['suffix']) === 'PS'"/>
             <file-code-one theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else/>
           </div>
           <div class="file-name">
@@ -37,6 +37,7 @@
 <script setup>
 import {computed, nextTick, onMounted, ref, watch} from "vue";
 import {VideoFile,FileZip,SeoFolder,AudioFile,FileDoc,FileExcel,AdobePhotoshop,FileCodeOne} from '@icon-park/vue-next';
+import {determineFileType} from "@/tools/tools";
 const show = ref(false);
 const showTableData = ref([]);
 const emit = defineEmits(['clickFile','copyUrl','delFile','handleScroll'])

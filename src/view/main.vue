@@ -167,10 +167,10 @@ const getTableDate = computed(()=>{
   let newTableDate = [];
   switch (fileSore.value) {
     case "timeStoB":
-      newTableDate =  jsonSort(tableData.value, "mtime",true);
+      newTableDate =  jsonSort(tableData.value, "mtime");
       break;
     case "timeBtoS":
-      newTableDate = jsonSort(tableData.value, "mtime");
+      newTableDate = jsonSort(tableData.value, "mtime",true);
       break;
     case "sizeStoB":
       newTableDate = jsonSort(tableData.value, "sizeRow",true);
@@ -249,11 +249,6 @@ import {getRatio} from "../../utils/utils";
 import HtmlVideoPlay from "@/view/HtmlVideoPlay.vue";
 //显示加载框
 const showLoading = ref(false);
-
-
-
-
-
 
 const returnPath = () => {
   if(imgShow.value || showDialog.value || delDialog.value || setStringShow.value){
@@ -601,7 +596,9 @@ const restartTheServer = () => {
     pwd: restartTheServerPwd.value
   }).then((res) => {
     if (res.data.msg === "开始重启") {
-      router.go(0)
+      router.replace({
+        name:"Home"
+      })
     } else {
       alert(res.data.msg)
     }

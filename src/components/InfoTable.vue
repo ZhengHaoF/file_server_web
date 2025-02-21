@@ -16,13 +16,15 @@
                     <div v-if="head.prop === 'name'" class="file-name" @click="clickFile(index)">
                       <div class="file-logo">
                         <seo-folder class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-if="data['isDirectory']"/>
-                        <video-two class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="VIDEO.includes(data['suffix'].toUpperCase())"/>
-                        <image-files class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="IMG.includes(data['suffix'].toUpperCase())"/>
-                        <file-zip class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="ZIP.includes(data['suffix'].toUpperCase())"/>
-                        <audio-file class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="AUDIO.includes(data['suffix'].toUpperCase())"/>
-                        <file-doc class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="DOC.includes(data['suffix'].toUpperCase())"/>
-                        <file-excel class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="EXCEL.includes(data['suffix'].toUpperCase())"/>
-                        <adobe-photoshop class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="PS.includes(data['suffix'].toUpperCase())"/>
+                        <video-two class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'VIDEO'"/>
+                        <image-files class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'IMG'"/>
+                        <file-zip class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'ZIP'"/>
+                        <audio-file class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'AUDIO'"/>
+                        <file-doc class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'DOC'"/>
+                        <file-excel class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'EXCEL'"/>
+                        <adobe-photoshop class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'PS'"/>
+                        <file-pdf-one class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'PSF'"/>
+                        <data-file class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'DATA'"/>
                         <file-code-one theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else/>
                       </div>
                       <div class="file-text">
@@ -59,8 +61,9 @@
 </template>
 <script setup>
 import {onMounted, ref, watch} from "vue";
-import {VideoTwo,ImageFiles,FileZip,SeoFolder,AudioFile,FileDoc,FileExcel,AdobePhotoshop,FileCodeOne} from '@icon-park/vue-next';
+import {VideoTwo,ImageFiles,FileZip,SeoFolder,AudioFile,FileDoc,FileExcel,AdobePhotoshop,FileCodeOne,FilePdfOne,DataFile} from '@icon-park/vue-next';
 import {formatDate} from "../../utils/utils";
+import  {determineFileType} from "@/tools/tools";
 
 // 滚动到底监听
 import { useScroll } from '@vueuse/core'
@@ -75,13 +78,7 @@ watch(y,(n,o)=>{
 const show = ref(false);
 const showTableData = ref([]);
 const emit = defineEmits(['clickFile','copyUrl','delFile','handleScroll'])
-const VIDEO = [".MP4", ".AVI", ".MOV", ".FLV",".MKV",".TS"];
-const IMG = [".JPG", ".JPEG", ".PNG", ".WEBP"];
-const PS = [".PSD"];
-const ZIP = [".RAR", ".ZIP", ".7Z"];
-const AUDIO = [".WAV", ".MP3", ".OGG"];
-const DOC = [".DOC",".DOCX"];
-const EXCEL = [".XLS",".XLSX"];
+
 const scrollHeight = ref(0);
 const scrollWidth = ref(0);
 const props = defineProps({

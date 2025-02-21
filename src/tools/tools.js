@@ -67,3 +67,37 @@ export const jsonSort = function (array, field, reverse) {
     }
     return array;
 }
+
+export const determineFileType = function (suffix){
+    const VIDEO = [".MP4", ".AVI", ".MOV", ".FLV", ".MKV", ".TS"];
+    const IMG = [".JPG", ".JPEG", ".PNG", ".WEBP"];
+    const PS = [".PSD"];
+    const ZIP = [".RAR", ".ZIP", ".7Z"];
+    const AUDIO = [".WAV", ".MP3", ".OGG"];
+    const DOC = [".DOC", ".DOCX"];
+    const PDF = [".PDF"];
+    const DATA = [".SQL"];
+    const EXCEL = [".XLS", ".XLSX"];
+    const upperSuffix = suffix.toUpperCase();
+    if (VIDEO.includes(upperSuffix)) {
+        return 'VIDEO';
+    } else if (IMG.includes(upperSuffix)) {
+        return 'IMG';
+    } else if (PS.includes(upperSuffix)) {
+        return 'PS';
+    } else if (ZIP.includes(upperSuffix)) {
+        return 'ZIP';
+    } else if (AUDIO.includes(upperSuffix)) {
+        return 'AUDIO';
+    } else if (DOC.includes(upperSuffix)) {
+        return 'DOC';
+    } else if (PDF.includes(upperSuffix)) {
+        return 'PDF';
+    } else if (DATA.includes(upperSuffix)) {
+        return 'DATA';
+    } else if (EXCEL.includes(upperSuffix)) {
+        return 'EXCEL';
+    } else {
+        return 'UNKNOWN';
+    }
+}
