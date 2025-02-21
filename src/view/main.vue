@@ -332,8 +332,6 @@ const getFileUrl = (filePath, fileName) => {
   } else {
     filePath = filePath.replace(/\$/g, "")
   }
-  filePath = filePath.replace(/__/g, "/")
-  // console.log(`获取文件：${local}/getFile${filePath}/${fileName}`)
   return `${local}/getFile${filePath}/${window.encodeURIComponent(fileName)}`;
 }
 
@@ -343,7 +341,6 @@ const getFilePath = (filePath, fileName) => {
   } else {
     filePath = filePath.replace(/\$/g, "")
   }
-  filePath = filePath.replace(/__/g, "/")
   return `${filePath}/${fileName}`;
 }
 //滚动事件
@@ -439,7 +436,7 @@ const clickFile = (index) => {
   let fileInfo = getTableDate.value[index];
   if (fileInfo.isDirectory && !fileInfo.isFile) {
     //是文件夹
-    path.value += `__${fileInfo.name}`
+    path.value += `/${fileInfo.name}`
     addHistory();
   } else {
     let fileSuffix = fileInfo.suffix;
@@ -549,7 +546,7 @@ onBeforeRouteUpdate((to, from, next)=>{
 })
 const addHistory = () => {
   router.push({
-    path:"/" + path.value.split('__').join('/')
+    path:"/" + path.value
   });
 }
 
@@ -624,7 +621,7 @@ watch(viewOriginalImage, (newName, oldName) => {
 
 onMounted(() => {
   if (route.params.path) {
-    path.value = route.params.path.join("__");
+    path.value = route.params.path.join("/");
   }else {
     path.value = "$";
   }
