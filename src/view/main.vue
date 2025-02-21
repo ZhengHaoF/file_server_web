@@ -18,9 +18,9 @@
                  :theme-color="themeColor" @clickFile="clickFile" @handleScroll="handleScroll" @del-file="delFile"
                  @copy-url="copyUrl"></InfoTable>
       <ImageTable :key="imageTableKey" v-if="model==='img'" ref="imageTableRef" :columns="columns" :img-size="imgSize"
-                   :onlyShowImages="onlyShowImages" :table-data="getTableDate" :table-head="tableHeader" :theme-color="themeColor"
-                   @clickFile="clickFile" @handleScroll="handleScroll" @del-file="delFile"
-                   @copy-url="copyUrl"></ImageTable>
+                  :onlyShowImages="onlyShowImages" :table-data="getTableDate" :table-head="tableHeader" :theme-color="themeColor"
+                  @clickFile="clickFile" @handleScroll="handleScroll" @del-file="delFile"
+                  @copy-url="copyUrl"></ImageTable>
     </div>
     <Transition>
       <div v-if="imgShow" class="imgBox">
@@ -135,7 +135,7 @@
 import {ArrowCircleLeft, ArrowCircleRight, Close, Return,ListBottom,AllApplication,SettingTwo} from "@icon-park/vue-next";
 import {computed, nextTick, onMounted, onUnmounted, ref, watch} from "vue";
 import axios from "axios";
-import {useRoute, useRouter,onBeforeRouteLeave} from "vue-router";
+import {useRoute, useRouter,onBeforeRouteUpdate} from "vue-router";
 import Dialog from "@/components/Dialog.vue";
 import ImageTable from "@/components/ImageTable.vue";
 import InfoTable from "@/components/InfoTable.vue";
@@ -152,6 +152,7 @@ const infoTableKey = ref(0);
 const imageTableKey = ref(0);
 const showDialog = ref(false);
 const delDialog = ref(false);
+
 const router = useRouter()
 const route = useRoute()
 let local;
@@ -249,26 +250,9 @@ import HtmlVideoPlay from "@/view/HtmlVideoPlay.vue";
 //显示加载框
 const showLoading = ref(false);
 
-const canJump = (to)=>{
-  if(
-      path.value === "$" ||
-      to.fullPath.includes("HtmlVideoPlay") ||
-      to.fullPath.includes("VideoPlay")
-  ){
-    return true;
-  }
-  return false
-}
 
-onBeforeRouteLeave((to,from,next)=>{
-  if(canJump(to)){
-    console.log("允许通过")
-    next();
-  }else{
-    console.log("拦截路由")
-    next(false);
-  }
-})
+
+
 
 
 const returnPath = () => {
@@ -278,8 +262,7 @@ const returnPath = () => {
     delDialog.value = false;
     setStringShow.value = false;
   }else{
-    path.value = path.value.slice(0, path.value.lastIndexOf("__") === -1 ? path.value.length : path.value.lastIndexOf("__"));
-    getFileList();
+    router.go(-1);
   }
 }
 
@@ -457,22 +440,21 @@ const clickFile = (index) => {
   if (fileInfo.isDirectory && !fileInfo.isFile) {
     //是文件夹
     path.value += `__${fileInfo.name}`
-    getFileList();
     addHistory();
   } else {
     let fileSuffix = fileInfo.suffix;
     if (VIDEO.includes(fileSuffix.toUpperCase())) {
       //视频
       playUrl.value = getFileUrl(path.value, fileInfo.name)
-      if(playMode.value === 'ask'){
+      if (playMode.value === 'ask') {
         //视屏播放是否询问
         showDialog.value = true;
-      }else{
+      } else {
         playVideo(playMode.value);
         playIndex.value = index;
       }
     } else if (IMG.includes(fileSuffix.toUpperCase())) {
-      let w = (window.screen.width*getRatio()/100).toFixed(0);//获取屏幕分辨率
+      let w = (window.screen.width * getRatio() / 100).toFixed(0);//获取屏幕分辨率
       //图片
       imgUrls.value = [];
       let num = 0;
@@ -483,9 +465,9 @@ const clickFile = (index) => {
             nowImgIndex.value = num;
           }
           num++;
-          if(viewOriginalImage.value){
+          if (viewOriginalImage.value) {
             imgUrls.value.push(getFileUrl(path.value, getTableDate.value[i].name));
-          }else {
+          } else {
             imgUrls.value.push(getFileUrl(path.value, getTableDate.value[i].name) + `!${w}x${w}`);
           }
         }
@@ -515,7 +497,7 @@ const getFileList = () => {
     showLoading.value = false;
     if (res.status === 200) {
       let data = res?.data?.list;
-      if(!data){
+      if (!data) {
         console.log("格式不匹配")
         return;
       }
@@ -524,33 +506,33 @@ const getFileList = () => {
         item['size'] = (Number(item['size']) / 1024 / 1024).toFixed(2) + "MB";
         if (item['isDirectory']) {
           item['size'] = "";
-        }else{
+        } else {
           item['url'] = getFileUrl(path.value, item.name);
         }
         return item;
       })
-      nextTick(()=>{
-        console.log(getScroll(path.value),"读取的位置")
-        if(model.value === "list"){
-          if(String(getScroll(path.value)).indexOf("index_") === -1){
+      nextTick(() => {
+        console.log(getScroll(path.value), "读取的位置")
+        if (model.value === "list") {
+          if (String(getScroll(path.value)).indexOf("index_") === -1) {
             InfoTableRef.value.setScroll(getScroll(path.value))
-          }else{
+          } else {
             InfoTableRef.value.setScroll(0)
           }
-        }else{
-          if(String(getScroll(path.value)).indexOf("index_") !== -1){
-            imageTableRef.value.setScroll(String(getScroll(path.value)).replaceAll("index_",""))
-          }else{
+        } else {
+          if (String(getScroll(path.value)).indexOf("index_") !== -1) {
+            imageTableRef.value.setScroll(String(getScroll(path.value)).replaceAll("index_", ""))
+          } else {
             imageTableRef.value.setScroll(getScroll(path.value))
           }
         }
       })
     }
-  }).catch((err)=>{
+  }).catch((err) => {
     showLoading.value = false;
-    if(err.response.status === 404){
+    if (err.response.status === 404) {
       console.log(err.response.data);
-      localStorage.setItem("path","$");
+      localStorage.setItem("path", "$");
       location.reload();
     }
   })
@@ -559,27 +541,28 @@ const backChange = () => {
   returnPath()
 }
 
+onBeforeRouteUpdate((to, from, next)=>{
+  console.log(to,from)
+  next((vm)=>{
+    getFileList();
+  })
+})
 const addHistory = () => {
-  const currentRoute = router.currentRoute.value;
-  // 使用 router.push 添加一个新的路由记录
   router.push({
-    ...currentRoute,
-    query: {
-      _t: Date.now(), // 添加一个时间戳作为查询参数
-    },
+    path:"/" + path.value.split('__').join('/')
   });
 }
 
 const model = ref("list")
 //切换图片/列表模式
 const changeMode = () => {
-  model.value = model.value === "list"?"img":"list"
-  localStorage.setItem("model",model.value)
+  model.value = model.value === "list" ? "img" : "list"
+  localStorage.setItem("model", model.value)
 }
 
 const setStringShow = ref(false)
 const showVideoPlay = ref(false)
-const SetString = ()=>{
+const SetString = () => {
   setStringShow.value = true;
 }
 
@@ -597,32 +580,32 @@ const folderSort = ref("start");
 const imgSize = ref(150)
 //列数
 const columns = ref(3)
-const setOk = ()=>{
+const setOk = () => {
   setStringShow.value = false;
-  localStorage.setItem("imgSize",String(imgSize.value))
-  localStorage.setItem("playMode",String(playMode.value))
-  localStorage.setItem("columns",String(columns.value))
-  localStorage.setItem("fileSore",String(fileSore.value))
-  localStorage.setItem("folderSort",String(folderSort.value))
-  localStorage.setItem("themeColor",String(themeColor.value))
+  localStorage.setItem("imgSize", String(imgSize.value))
+  localStorage.setItem("playMode", String(playMode.value))
+  localStorage.setItem("columns", String(columns.value))
+  localStorage.setItem("fileSore", String(fileSore.value))
+  localStorage.setItem("folderSort", String(folderSort.value))
+  localStorage.setItem("themeColor", String(themeColor.value))
   infoTableKey.value++;
   imageTableKey.value++;
 }
 
-const clearCache = ()=>{
+const clearCache = () => {
   localStorage.clear();
   location.reload();
 }
 
 
-const restartTheServerPwd  = ref("");
-const restartTheServer = ()=>{
-  axios.post(`${local}/restartServer`,{
-    pwd:restartTheServerPwd.value
-  }).then((res)=>{
-    if(res.data.msg === "开始重启"){
+const restartTheServerPwd = ref("");
+const restartTheServer = () => {
+  axios.post(`${local}/restartServer`, {
+    pwd: restartTheServerPwd.value
+  }).then((res) => {
+    if (res.data.msg === "开始重启") {
       router.go(0)
-    }else{
+    } else {
       alert(res.data.msg)
     }
   })
@@ -639,8 +622,12 @@ watch(viewOriginalImage, (newName, oldName) => {
 });
 
 
-
 onMounted(() => {
+  if (route.params.path) {
+    path.value = route.params.path.join("__");
+  }else {
+    path.value = "$";
+  }
 
   // 给 popstate 绑定一个方法 监听页面刷新
   window.addEventListener('popstate', backChange, true);//false阻止默认事件
@@ -662,11 +649,7 @@ onMounted(() => {
   //主题色
   themeColor.value = localStorage.getItem("themeColor") || "#f6823b";
   model.value = localStorage.getItem("model") || "list";
-  let pathValue = localStorage.getItem("path");
-  if (pathValue) {
-    path.value = pathValue;
-  }
-  addHistory();
+  // addHistory();
   getFileList();
 
   // function scr() {
@@ -698,6 +681,7 @@ watch(path, (newName, oldName) => {
   cursor: pointer;
   display: flex;
   z-index: 99999;
+
   .ret {
     flex: 2;
     text-align: center;
@@ -708,7 +692,7 @@ watch(path, (newName, oldName) => {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    -o-text-overflow:ellipsis;
+    -o-text-overflow: ellipsis;
   }
 
   .mode {
@@ -746,6 +730,7 @@ watch(path, (newName, oldName) => {
   top: 0;
   left: 0;
   box-sizing: border-box;
+
   .close-icon {
     background-color: black;
     width: 40px;
@@ -759,6 +744,7 @@ watch(path, (newName, oldName) => {
     z-index: 9999;
     border-radius: 10px;
   }
+
   .blackScreen {
     width: 100vw;
     height: 100vh;
@@ -823,11 +809,12 @@ watch(path, (newName, oldName) => {
   opacity: 0;
 }
 
-.PxInput{
+.PxInput {
   width: 40px;
   padding: 2px;
 }
-.select-input{
+
+.select-input {
   padding: 2px;
 }
 
@@ -835,27 +822,31 @@ watch(path, (newName, oldName) => {
   padding-top: 12px;
   padding-bottom: 5px;
   display: flex;
-  span{
-    align-self:center;
+
+  span {
+    align-self: center;
   }
 }
-.loading{
+
+.loading {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 150px;
   height: 150px;
-  background-color: rgba(0,0,0,0.6);
+  background-color: rgba(0, 0, 0, 0.6);
   border-radius: 20px;
   color: white;
   text-align: center;
-  img{
+
+  img {
     position: absolute;
     top: 20px;
     left: 30px;
   }
-  .text{
+
+  .text {
     position: absolute;
     bottom: 10px;
     text-align: center;

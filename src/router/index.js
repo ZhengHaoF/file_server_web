@@ -11,7 +11,8 @@ import HtmlVideoPlay from '@/view/HtmlVideoPlay.vue'
 
 const routes = [
   {
-    path: '/',
+    name: 'Home',
+    path: '/:path*',
     component: Home
   },
   {
