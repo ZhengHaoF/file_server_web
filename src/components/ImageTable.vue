@@ -15,7 +15,7 @@
           <div class="icon">
             <seo-folder class="icon-svg" theme="filled" :fill="themeColor" :size="iconSize" :strokeWidth="1" v-if="data['isDirectory']"/>
             <video-file class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="determineFileType(data['suffix']) === 'VIDEO'"/>
-            <img class="icon-svg imgLazy" v-lazy="data.url + `!${imgSize}x${imgSize}`" style="object-fit: cover;width: 100%;height: 100%;aspect-ratio:1/1;border-radius: 10px;" v-else-if="determineFileType(data['suffix']) === 'IMG'" alt="data.name" src=""/>
+            <img class="icon-svg imgLazy" v-lazy="data.url + `!${imgSize}x${imgSize}`" style="object-fit: cover;width: 100%;height: 100%;aspect-ratio:1/1;border-radius: 5px;" v-else-if="determineFileType(data['suffix']) === 'IMG'" alt="data.name" src=""/>
             <file-zip class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="determineFileType(data['suffix']) === 'ZIP'"/>
             <audio-file class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="determineFileType(data['suffix']) === 'AUDIO'"/>
             <file-doc class="icon-svg" theme="filled" :size="iconSize" :fill="themeColor"  :strokeWidth="1" v-else-if="determineFileType(data['suffix']) === 'DOC'"/>
@@ -41,13 +41,7 @@ import {determineFileType} from "@/tools/tools";
 const show = ref(false);
 const showTableData = ref([]);
 const emit = defineEmits(['clickFile','copyUrl','delFile','handleScroll'])
-const VIDEO = [".MP4", ".AVI", ".MOV", ".FLV",".MKV",".TS"];
-const IMG = [".JPG", ".JPEG", ".PNG", ".WEBP"];
-const PS = [".PSD"];
-const ZIP = [".RAR", ".ZIP", ".7Z"];
-const AUDIO = [".WAV", ".MP3", ".OGG"];
-const DOC = [".DOC",".DOCX"];
-const EXCEL = [".XLS",".XLSX"];
+
 
 const iconSize = ref("100%")
 const props = defineProps({
@@ -95,7 +89,7 @@ const getShowTableData = computed(() => {
   let list = [];
   showTableData.value.forEach((item,index) => {
     if(props.onlyShowImages){
-      if (IMG.includes(item['suffix'].toUpperCase()) || item['isDirectory']){
+      if (determineFileType(item['suffix']) === "IMG" || item['isDirectory']){
         list.push({
           ...item,
           index:index
@@ -180,7 +174,7 @@ watch(() => props.tableData, () => {
   float: left;
 
   .icon{
-    padding: 12px;
+    padding: 5px;
     display: flex;
     margin: 0 auto;
   }

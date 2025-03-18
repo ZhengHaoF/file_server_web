@@ -244,18 +244,19 @@ const tableHeader = ref([
 
 //加载框使用的图片
 import loadingImg from "../assets/loading.png"
-import {jsonSort} from "../tools/tools";
+import {jsonSort} from "@/tools/tools";
 import {getRatio} from "../../utils/utils";
 import HtmlVideoPlay from "@/view/HtmlVideoPlay.vue";
 //显示加载框
 const showLoading = ref(false);
 
 const returnPath = () => {
-  if(imgShow.value || showDialog.value || delDialog.value || setStringShow.value){
+  if(imgShow.value || showDialog.value || delDialog.value || setStringShow.value || showVideoPlay.value){
     imgShow.value = false;
     showDialog.value = false;
     delDialog.value = false;
     setStringShow.value = false;
+    showVideoPlay.value = false;
   }else{
     router.go(-1);
   }

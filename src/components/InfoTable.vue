@@ -1,56 +1,58 @@
 <template>
     <div class="box" ref="box" :style="{height:scrollHeight - 40 + 'px'}">
       <table>
-            <tr style="background-color: #f6f6f6">
-                <th v-for="item in tableHead"
-                    :class="{'bgRed':item.bgColor==='red','bgGreen':item.bgColor==='green','textRed':item.textColor==='red','textGreen':item.textColor==='green'} "
-                    :style="{'width':item.width}"
-                >
-                    {{ item.span }}
-                </th>
-            </tr>
+        <tbody>
+        <tr style="background-color: #f6f6f6">
+          <th v-for="item in tableHead"
+              :class="{'bgRed':item.bgColor==='red','bgGreen':item.bgColor==='green','textRed':item.textColor==='red','textGreen':item.textColor==='green'} "
+              :style="{'width':item.width}"
+          >
+            {{ item.span }}
+          </th>
+        </tr>
 
-            <tr v-for="(data,index) in showTableData">
-                <td v-for="(head) in tableHead"
-                    :class="{'textRed':head['textColor']==='red','textGreen':head['textColor']==='green'} ">
-                    <div v-if="head.prop === 'name'" class="file-name" @click="clickFile(index)">
-                      <div class="file-logo">
-                        <seo-folder class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-if="data['isDirectory']"/>
-                        <video-two class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'VIDEO'"/>
-                        <image-files class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'IMG'"/>
-                        <file-zip class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'ZIP'"/>
-                        <audio-file class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'AUDIO'"/>
-                        <file-doc class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'DOC'"/>
-                        <file-excel class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'EXCEL'"/>
-                        <adobe-photoshop class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'PS'"/>
-                        <file-pdf-one class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'PSF'"/>
-                        <data-file class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'DATA'"/>
-                        <file-code-one theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else/>
-                      </div>
-                      <div class="file-text">
-                        {{ data[head.prop]}}
-                      </div>
-                      <div class="file-item">
-                        {{ formatDate(data['mtime'],'{y}-{m}-{d} {h}:{i}:{s}')}}
-                      </div>
-                      <div class="file-size">
-                        {{ data['size']}}
-                      </div>
-                    </div>
-                    <div v-else-if="head.prop === 'cz'" v-if="data.isFile" class="file-name" style="display: flex;text-align: center">
-                        <div style="flex: 1">
-                          <button @click="copyUrl(index)" :style="{borderColor:themeColor}">分享</button>
-                        </div>
-                        <div style="flex: 1">
-                          <button @click="delFile(index)" :style="{borderColor:themeColor}">删除</button>
-                        </div>
-                    </div>
-                    <div v-else class="file-name">{{ data[head.prop] }}</div>
-                </td>
-            </tr>
+        <tr v-for="(data,index) in showTableData">
+          <td v-for="(head) in tableHead"
+              :class="{'textRed':head['textColor']==='red','textGreen':head['textColor']==='green'} ">
+            <div v-if="head.prop === 'name'" class="file-name" @click="clickFile(index)">
+              <div class="file-logo">
+                <seo-folder class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-if="data['isDirectory']"/>
+                <video-two class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'VIDEO'"/>
+                <image-files class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'IMG'"/>
+                <file-zip class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'ZIP'"/>
+                <audio-file class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'AUDIO'"/>
+                <file-doc class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'DOC'"/>
+                <file-excel class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'EXCEL'"/>
+                <adobe-photoshop class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'PS'"/>
+                <file-pdf-one class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'PSF'"/>
+                <data-file class="icon-svg" theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else-if="determineFileType(data['suffix']) === 'DATA'"/>
+                <file-code-one theme="outline" size="24" :fill="themeColor" :strokeWidth="2" v-else/>
+              </div>
+              <div class="file-text">
+                {{ data[head.prop]}}
+              </div>
+              <div class="file-item">
+                {{ formatDate(data['mtime'],'{y}-{m}-{d} {h}:{i}:{s}')}}
+              </div>
+              <div class="file-size">
+                {{ data['size']}}
+              </div>
+            </div>
+            <div v-else-if="head.prop === 'cz'" v-if="data.isFile" class="file-name" style="display: flex;text-align: center">
+              <div style="flex: 1">
+                <button @click="copyUrl(index)" :style="{borderColor:themeColor}">分享</button>
+              </div>
+              <div style="flex: 1">
+                <button @click="delFile(index)" :style="{borderColor:themeColor}">删除</button>
+              </div>
+            </div>
+            <div v-else class="file-name">{{ data[head.prop] }}</div>
+          </td>
+        </tr>
 
-            <tr v-if="tableData.length !== 0"><td style="text-align: center;color: #999" colspan="3">到底了···</td></tr>
-        </table>
+        <tr v-if="tableData.length !== 0"><td style="text-align: center;color: #999" colspan="3">到底了···</td></tr>
+        </tbody>
+      </table>
       <div v-if="tableData.length === 0" style="text-align: center;position: absolute;width: 100vw;height: 100vh;top: 0;left: 0;line-height: 100vh">
         当前数据为空
       </div>
