@@ -3,7 +3,8 @@
       <table>
         <tbody>
         <tr style="background-color: #f6f6f6">
-          <th v-for="item in tableHead"
+          <th v-for="(item, index) in tableHead"
+              :key="index"
               :class="{'bgRed':item.bgColor==='red','bgGreen':item.bgColor==='green','textRed':item.textColor==='red','textGreen':item.textColor==='green'} "
               :style="{'width':item.width}"
           >
@@ -11,8 +12,9 @@
           </th>
         </tr>
 
-        <tr v-for="(data,index) in showTableData">
-          <td v-for="(head) in tableHead"
+        <tr v-for="(data,index) in showTableData" :key="index">
+          <td v-for="(head, index) in tableHead"
+              :key="index"
               :class="{'textRed':head['textColor']==='red','textGreen':head['textColor']==='green'} ">
             <div v-if="head.prop === 'name'" class="file-name" @click="clickFile(index)">
               <div class="file-logo">
@@ -38,7 +40,7 @@
                 {{ data['size']}}
               </div>
             </div>
-            <div v-else-if="head.prop === 'cz'" v-if="data.isFile" class="file-name" style="display: flex;text-align: center">
+            <div v-else-if="head.prop === 'cz' && data.isFile" class="file-name" style="display: flex;text-align: center">
               <div style="flex: 1">
                 <button @click="copyUrl(index)" :style="{borderColor:themeColor}">分享</button>
               </div>
@@ -147,7 +149,7 @@ defineExpose({
 </script>
 
 <style lang="scss" scoped>
-.box {;
+.box {
   overflow-y: scroll;
 }
 

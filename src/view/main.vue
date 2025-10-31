@@ -252,11 +252,15 @@ const showLoading = ref(false);
 
 const returnPath = () => {
   if(imgShow.value || showDialog.value || delDialog.value || setStringShow.value || showVideoPlay.value){
+    console.log("132456")
+    // 关闭所有弹窗
     imgShow.value = false;
     showDialog.value = false;
     delDialog.value = false;
     setStringShow.value = false;
     showVideoPlay.value = false;
+    // 阻止历史记录变化，防止页面返回
+    window.history.pushState(null, null, window.location.href);
   }else{
     router.go(-1);
   }
@@ -530,8 +534,27 @@ const getFileList = () => {
     }
   })
 }
-const backChange = () => {
-  returnPath()
+const backChange = (event) => {
+  // 阻止默认返回行为
+  if(event && event.preventDefault){
+    event.preventDefault();
+  }
+  
+  // 如果有弹窗显示，关闭弹窗
+  if(imgShow.value || showDialog.value || delDialog.value || setStringShow.value || showVideoPlay.value){
+    // 关闭所有弹窗
+    imgShow.value = false;
+    showDialog.value = false;
+    delDialog.value = false;
+    setStringShow.value = false;
+    showVideoPlay.value = false;
+    // 阻止历史记录变化
+    window.history.pushState(null, null, window.location.href);
+    return false;
+  }else{
+    // 执行返回操作
+    returnPath();
+  }
 }
 
 onBeforeRouteUpdate((to, from, next)=>{
@@ -624,8 +647,28 @@ onMounted(() => {
     path.value = "$";
   }
 
-  // 给 popstate 绑定一个方法 监听页面刷新
-  window.addEventListener('popstate', backChange, true);//false阻止默认事件
+  // 给 popstate 绑定一个方法 监听页面返回
+  window.addEventListener('popstate', backChange, true);
+  
+  // 监听移动设备返回手势
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', () => {
+      // 检测是否是侧滑返回导致的尺寸变化
+      if (window.visualViewport.width < window.innerWidth) {
+        // 如果有弹窗显示，阻止默认返回行为
+        if(imgShow.value || showDialog.value || delDialog.value || setStringShow.value || showVideoPlay.value){
+          // 关闭所有弹窗
+          imgShow.value = false;
+          showDialog.value = false;
+          delDialog.value = false;
+          setStringShow.value = false;
+          showVideoPlay.value = false;
+          // 阻止历史记录变化
+          window.history.pushState(null, null, window.location.href);
+        }
+      }
+    });
+  }
 
 
   //预览图片大小
