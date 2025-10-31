@@ -115,11 +115,9 @@
     </Transition>
 
     <Transition>
-      <Dialog v-if="showVideoPlay" :okBtnText="'关闭'" :btnNum="1" :big-dialog="true" :title="'视屏播放'" @ok-btn="showVideoPlay = false">
-        <template #body>
+      <div style="height: calc(100vh - 40px);width: 100vw;position: absolute;bottom: 0;left: 0;" v-if="showVideoPlay">
           <html-video-play :key="videoKey" @next-video="nextVideo" @prev-video="preVideo" :url="playUrl"></html-video-play>
-        </template>
-      </Dialog>
+      </div>
     </Transition>
     <Transition>
       <div class="loading" v-if="showLoading">
@@ -252,7 +250,6 @@ const showLoading = ref(false);
 
 const returnPath = () => {
   if(imgShow.value || showDialog.value || delDialog.value || setStringShow.value || showVideoPlay.value){
-    console.log("132456")
     // 关闭所有弹窗
     imgShow.value = false;
     showDialog.value = false;

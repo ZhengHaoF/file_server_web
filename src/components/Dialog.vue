@@ -1,13 +1,13 @@
 <template>
   <div class="box">
     <div class="main" :class="{'big-main':bigDialog}">
-      <div class="title"><span>{{ props.title }}</span></div>
+      <div class="title" v-if="showTitle"><span>{{ props.title }}</span></div>
       <div class="body">
         <slot name="body">
 
         </slot>
       </div>
-      <div class="footer">
+      <div class="footer" v-if="showFooter">
         <div class="close-btn" v-if="props.btnNum > 1" @click="closeBtn">关闭</div>
         <div class="ok-btn" @click="okBtn">{{props.okBtnText}}</div>
       </div>
@@ -17,6 +17,14 @@
 </template>
 <script setup>
 const props = defineProps({
+  showFooter:{
+    type:Boolean,
+    default:true
+  },
+  showTitle:{
+    type:Boolean,
+    default:true
+  },
   title: {
     type: String,
     default: "标题",
@@ -47,10 +55,10 @@ const closeBtn = () => {
 .box {
   z-index: 9999;
   width: 100vw;
-  height: 100vh;
+  height: calc(100% - 40px);
   background-color: rgba(0, 0, 0, 0.8);
   position: fixed;
-  top: 0;
+  bottom: 0;
   left: 0;
 
   .main {
